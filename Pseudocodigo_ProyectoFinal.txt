@@ -1,0 +1,2695 @@
+                                                                           "PSEUDOCÓDIGO PROYECTO FINAL -PARQUE COSTAZUL-"
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase AVL
+	privado Nodo raiz;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AVL()
+		raiz = nulo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	funcion booleana esVacio()
+		retorna raiz = nulo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo obtenerRaiz()
+		retorna raiz;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	entero obtenerFE(Nodo nodo) //OBTENEMOS EL FACTOR DE EQUILIBRIO IZQUIERA-DERECHA.
+		si (nodo = nulo)
+			retorna 0;
+			sino 
+				retorna nodo.obtenerAltura(nodo.obtenerIzq()) - nodo.obtenerAltura(nodo.obtenerDer());
+			fin Sino	
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	actualizarAltura(Nodo nodo) //METODO PARA ACTUALIZAR LAS ALTURAS DE LOS NODOS DESPUES DE CADA MOVIMIENTO/ROTACION
+		si (nodo es diferente de nulo)
+			nodo.asignarAltura(Math.max(nodo.obtenerAltura(nodo.obtenerAltura(nodo.obtenerIzq()), nodo.obtenerAltura(nodo.obtenerDer())) + 1);
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo rotacionDerecha(Nodo a) //PARA BALANCEAR HACIA LA DERECHA
+		Nodo b = a.obtenerIzq();
+		Nodo aux = b.obtenerDer();
+		
+		b.asignarDer(a);
+		a.asignarIzq(aux);
+
+		actuaalizarAltura(a);
+		actualizarAltura(b);
+		
+		retorna b;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo rotacionIzquiera(Nodo b); //PARA BALANCEAR HACIA LA IZQUIERDA
+		Nodo a = b.obtenerDer();
+		Nodo aux = a.obtenerIzq();
+		
+		a.asignarIzq(b);
+		b.asignarDer(aux);
+
+		actuaalizarAltura(b);
+		actualizarAltura(a);
+		
+		retorna a;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	insertarTienda(Tienda tienda)
+		raiz = insertarT(raiz, tienda);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo insertarT(Nodo nodo, Tienda tienda)
+		si (nodo = nulo)
+			Nodo n = new Nodo();
+			n.asignarValorTienda(tienda);
+			retorna n;	
+		fin si
+		
+		si (tienda.getLocal() < nodo.obtenerValorTienda().obtenerLocal()) //SI ES MENOR VA A LA IZQUIERDA
+			nodo.asignarIzq(insertarT(nodo.obtenerIzq(), tienda));
+			sino si(tienda.obtenerLocal() > nodo.obtenerValorTienda().obtenerLocal()) //SI ES MAYOR VA A LA DERECHA
+				nodo.asignarDer(insertarT(nodo.obtenerDer(), tienda));
+				sino 
+					retorna nodo; //EN CASO DE SER DUPLICADO, NO LO INGRESA.
+				fin sino
+			fin sino
+		fin si
+
+		actualizarAltura(nodo);
+		entero FE = obtenerFE(nodo);
+
+		si (FE > 1 && tienda.obtenerLocal() < nodo.obtenerIzq().obtenerValorTienda().obtenerLocal()) //CUANDO HAY DESEQUILIBRIO A LA IZQUIERDA Y LA HOJA ESTA A LA IZQUIERDA
+			retorna rotacionDerecha(nodo);
+		fin si
+
+		si (FE < -1 && tienda.obtenerLocal() > nodo.obtenerDer().obtenerValorTienda().obtenerLocal()) //CUANDO HAY DESEQUILIBRIO A LA DERECHA Y LA HOJA ESTA A LA DERECHA.
+			retorna rotacionIzquierda(nodo);
+		fin si
+
+		si (FE > 1 && tienda.obtenerLocal() > nodo.obtenerIzq().obtenerValorTienda().obtenerLocal()) //CUANDO HAY DESEQUILIBRIO A LA IZQUIERDA Y LA HOJA ESTA A LA DERECHA.
+			nodo.asignarIzq(rotacionIzquierda(nodo.obtenerIzq())); //SE ROTA A LA IZQUIERDA
+			retorna rotacionDerecha(nodo); //DESPUES A LA DERECHA
+		fin si
+		
+		si (FE < -1 && tienda.obtenerLocal() < nodo.obtenerDer().obtenerValorTienda().obtenerLocal()); //CUANDO HAY DESEQUILIBRIO A LA DERECHA Y LA HOJA ESTA A LA IZQUIERDA.
+			nodo.asignarDer(rotacionDerecha(nodo.obtenerDer())); //SE ROTA A LA DERECHA
+			retorna rotacionIzquierda(nodo); //DESPUES A LA IZQUIERDA
+		fin si 
+		retorna nodo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+	Nodo obtenerNodoMinimo(Nodo nodo) //METODO PARA ELIMINAR UN NODO PARA DETERMINAR SU REEMPLAZO
+		Nodo actual = nodo;
+		mientras (actual.obtenerIzq() sea diferente a Nulo) //CONSIGUE EL NODO CON EL VALOR MAS PEQUEÑO
+			actual = actual.obtenerIzq();
+		fin mientras
+		retorna actual;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Tienda buscarTienda(entero numLocal) //PARA RETORNAR LOS DATOS DE UNA TIENDA DENTRO DEL ARBOL
+		retorna buscarT(raiz, numLocal);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Tienda buscarT(Nodo n, entero numLocal)
+		si (n = nulo)
+			retorna nulo;
+		fin si
+		si (n.obtenerValorTienda().obtenerLocal() = numLocal)
+			retorna n.obtenerValorTienda();
+		fin si
+		si (numLocal > n.obtenerValorTienda().obtenerLocal()
+			retorna buscarT(n.obtenerDer(), numLocal);
+			sino	
+				retorna buscarT(n.obtenerIzq(), numLocal);
+			fin sino
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	insertarPersona (Persona persona) //PARA INSERTAR UNA PERSONA DENTRO DEL ARBOL, FUNCIONA IGUAL QUE LAS TIENDAS
+		raiz = insertarP(raiz, persona);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo insertarP(Nodo nodo, Persona persona)
+		si (nodo = nulo)
+			Nodo n = nuevo Nodo();
+			n.asignarValorPersona(persona);
+			retorna n;
+		fin si
+		si (persona.obtenerID() < nodo.obtenerValorPersona().obtenerID())
+			nodo.asignarIzq(insertarP(nodo.obtenerIzq(), persona));
+			sino si (persona.obtenerID() > nodo.obtenerValorPersona().obtenerID())
+				nodo.asignarDer(insertarP(nodo.obtenerDer(), persona));
+			sino
+				retorna nodo;
+			fin sino
+			fin sino
+		fin si
+
+		actualizarAltura(nodo);
+
+		entero FE = obtenerFE(nodo);
+
+		si (FE > 1 && persona.obtenerID() < nodo.obtenerIzq().obtenerValorPersona().obtenerID())
+			retorna rotacionDerecha(nodo);
+		fin si
+		si (FE < -1 && persona.obtenerID() > nodo.obtenerDer().obtenerValorPersona().obtenerID())
+			retorna rotacionIzquierda(nodo);
+		fin si
+		si (FE > 1 && persona.obtenerID() > nodo.obtenerIzq().obtenerValorPersona().obtenerID())
+			nodo.asignarIzq(rotacionIzquierda(nodo.obtenerIzq()));
+			return rotacionDerecha(nodo);
+		fin si
+		if (FE < -1 && persona.obtenerID() < nodo.obtenerDer().obtenerValorPersona.obtenerID())
+			nodo.asignarDer(rotacionDerecha(nodo.obtenerDer()));
+			retorna rotacionIzquierda(nodo);
+		fin si
+		retorna nodo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	eliminarPersona(Persona persona) //PARA ELIMINAR UNA PERSONA DEL ARBOL
+		raiz = eliminarP(raiz, persona);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo eliminarP(Nodo nodo, Persona persona)
+		si (nodo = nulo)
+			retorna nulo;
+		fin si
+		si (persona.obtenerID() < nodo.obtenerValorPersona().obtenerID())
+			nodo.asignarIzq(eliminarP(nodo.obtenerIzq(), persona));
+			sino si (persona.obtenerID() > nodo.obtenerValorPersona().obtenerID())
+				nodo.asignarDer(eliminarP(nodo.obtenerDer(), persona));
+				sino
+					//NODO CON UN SOLO HIJO O SIN HIJOS
+					si ((nodo.obtenerIzq() = nulo) || (nodo.obtenerDer() = nulo))
+						Nodo temp = nulo;
+						si (temp = nodo.obtenerIzq())
+							temp = nodo.obtenerDer();
+							sino
+								temp = nodo.obtenerIzq();
+							fin sino
+						fin si
+						
+						si (temp = nulo) //NODO SIN HIJOS
+							nodo = null;
+							sino //UN HIJO
+								nodo = temp; //COPIAR EL CONTENIDO DEL HIJO NO NULO
+							fin sino
+						fin si
+					sino 
+						//NODO CON DOS HIJOS: OBTENER MENOR EN EL SUBARBOL DERECHO
+						Nodo temp = obtenerNodoMinimo(nodo.obtenerDer());
+						//COPIAR LOS DATOS DEL SUCESOR AL NODO ACTUAL
+						nodo.asignarValorPersona(temp.obtenerValorPersona());
+						//ELIMINAR EL SUCESOR EN SU POSICION ORIGINAL
+						nodo.asignarDer(eliminarP(nodo.obtenerDer(), temp.obtenerValorPersona()));
+					fin sino
+					fin si
+				fin sino
+				//SI EL ARBOL TENIA SOLO UN NODO, ENTONCES RETORNAR
+				if (nodo = nulo)
+					retorna nulo;
+				fin si
+
+				actualizarAltura(nodo);
+			
+				entero FE = obtenerFE(nodo);
+				//ROTACIONES DE SER NECESARIO, MISMA LOGICA QUE EN LA INSERCION
+				si (FE > 1 && obtenerFE(nodo.obtenerIzq()) >= 0)
+					retorna rotacionDerecha(nodo);
+				fin si
+				si (FE < -1 && obtenerFE(nodo.obtenerDer()) <= 0)
+					retorna rotacionIzquierda(nodo);
+				fin si
+				si (FE > 1 && obtenerFE(nodo.obtenerIzq()) < 0)
+					nodo.asignarIzq(rotacionIzquierda(nodo.obtenerIzq()));
+					retorna rotacionDerecha(nodo);
+				fin si
+				si (FE < -1 && obtenerFE(nodo.obtenerIzq()) > 0)
+					nodo.asignarDer(rotacionDerecha(nodo.obtenerDer()));
+					retorna rotacionIzquierda(nodo);
+				fin si
+			fin sino
+		fin si
+				
+		retorna nodo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerDatosPersonas() //PARA OBTENER LOS DATOS EN UNA CADENA DE TODAS LAS PERSONAS EN EL ARBOL.
+		retorna rPreOrdenP(raiz);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena rPreOrdenP(Nodo n)
+		cadena s="";
+		si (n es diferente de nulo)
+			cadena persona = n.obtenerValorPersona().obtenerID() + "_" + n.obtenerValorPersona().obtenerNombre() + "_" + n.obtenerValorPersona().obtenerApellido() + "_" + n.obtenerValorPersona().obtenerTci() + "_" + n.obtenerValorPersona().getCi() + "_" + n.obtenerValorPersona().obtenerDEntrada() + "_" + n.obtenerValorPersona().obtenerHEntrada() + "_" + n.obtenerValorPersona().obtenerMEntrada() + "_" + n.obtenerValorPersona().obtenerHSalida() + "_" + n.obtenerValorPersona().obtenerMSalida();
+			
+			cadena carro;
+			si (n.obtenerValorPersona().obtenerCarro() = nulo)
+				carro = "no";
+				sino
+					carro = n.obtenerValorPersona().obtenerCarro().obtenerTipo() + "/" + n.obtenerValorPersona().obtenerCarro().obtenerPlaca() + "/" + n.obtenerValorPersona().obtenerCarro().getColor() + "/" + n.obtenerValorPersona().obtenerCarro().obtenerMarca();
+				fin sino
+			fin si
+		
+			cadena compras;
+			si (n.obtenerValorPersona().obtenerCompras().esVacia())
+				compras = "no\n";
+				sino
+					compras = n.obtenerValorPersona().obtenerCompras().datosCompras() + "\n";
+				fin sino
+			fin si
+			retorna s += persona + "_" + carro + "_" + compras + rPreOrdenP(n.obtenerIzq()) + rPreOrdenP(n.obtenerDer());
+		sino
+			retorna s;
+		fin sino
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//	
+	buscarPorCI(cadena cedula) //BUSCAR PERSONAS EN EL ARBOL CON ESA CEDULA
+		buscarPCI(raiz, cedula);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	buscarPCI(Nodo n, cadena cedula)
+		si (n = nulo);
+			retorna;
+		fin si
+		cadena CIActual = n.obtenerValorPersona().obtenerTci()+n.obtenerValorPersona().obtenerCi();
+		si (cedula.equals(CIActual))
+			menuEditar.coincidencias.agregarPersonaEnLaPila(n.obtenerValorPersona());
+		fin si
+
+		buscarPCI(n.obtenerDer(), cedula);
+		buscarPCI(n.obtenerIzq(), cedula);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	buscarPorNombre(cadena nombre) //BUSCAR PERSONAS EN EL ARBOL CON ESE NOMBRE
+		buscarPN(raiz, nombre);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	buscarPN(Nodo no, cadena nombre)
+		si (n = nulo)
+			retorna;
+		fin si
+		cadena nombreActual = n.obtenerValorPersona().obtenerNombre() + " " + n.obtenerValorPersona().obtenerApellido();
+		si (nombre.equals(nombreActual))
+			menuEditar.coincidencias.agregarPersonaEnLaPila(n.obtenerValorPersona());
+		fin si
+		buscarPN(n.obtenerDer(), nombre);
+		buscarPN(n.obtenerIzq(), nombre);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+fin clase AVL
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Archivos()
+
+	Cadena leerArchivo (cadena archivo) throws IOException ( //Para leer la información en los archivos 
+
+		file f = nuevo file (file);
+
+			si (f.existe ())
+				leerEntrada BR = nuevo LeerEntrada (nuevo LeerArchivo (file));
+				cadena linea, s;
+				linea = BR.LeerLinea ();
+				s = linea; 
+				Mientras ((linea = BR.LeerLinea ()) sea diferente a nulo)
+					s += "\n" + linea;
+				Fin mientras 
+				Retorna s;
+			fin si
+			Retorna nulo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	EscribirArchivo (cadena s, cadena file) throws IOException //para actualizar/crear archivo
+		FileWriter archivo = nulo;
+		PrintWriter escritor = nulo;
+
+		Intentar 
+			Archivo = nuevo FileWriter (file);
+			Escritor = nuevo PrintWriter (archivo);
+
+			Escritor.println (s);
+		Capturar (Exception e)
+			Mostrar en pantalla ("Error: " + e.obtenerMensaje());
+		Finalizar
+			Archivo.cerrar();
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase Archivos.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Bienvenido
+	entero idPersona; //ID QUE SE ASIGNARA A CADA PERSONA
+	cadena diaActual; //GUARDA EL DIA ACTUAL SELECCIONADO
+	entero horaActual; //GUARDA LA HORA ACTUAL SELECCIONADA
+	entero minActual; //GUARDA EL MINUTO ACTUAL SELECCIONADO
+	puestoEst[][] sectoresCarros = nuevo puestoEst[5][500]; //ARREGLO CON LOS PUESTOS DE LOS CARROS
+	puestoEst[][] sectoresMotos = nuevo puestoEst[2][100]; //ARREGLO CON LOS PUESTOS DE LAS MOTOS
+	boolean primerInicio = true; //PARA DETERMINAR SI EL PROGRAMA INICIO POR PRIMERA VEZ O NO
+	AVL tiendas = nuevo AVL(); //ARBOL BALANCEADO DE TIENDAS
+	cadena[] nombresTiendas = nueva cadena[60]; //DONDE SE GUARDAN LOS NOMBRES DE LAS TIENDAS PARA LOS JCOMBO
+	AVL personas = nuevo AVL(); //ARBOL BALANCEADO DE TIENDAS
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Bienvenido() throws IOException
+		si (primeroInicio)
+			idPersona = 0;
+			//CARGA INFORMACION DE LOS PUESTOS, TIENDAS Y PERSONAS DESDE LOS ARCHIVOS AL SISTEMA
+			archivoPuestos();
+            		archivoTiendas();
+            		archivoPersonas();
+            		primerInicio = false;
+		fin si
+		sino
+			//ACTUALIZA EL ARCHIVO DE PUESTOS
+			Cadena s="";
+			para (entero i=0; i<5; i++)
+				para (entero j=0; j<500; j++)
+					si(sectorCarros[i][j].obtenerOcupantes().esVacia())
+						s+= sectoresCarros[i][j].obtenerSector() + "_" + sectoresCarros[i][j].obtenerNumero() + "_" + "no" + "\n";					fin si
+					sino
+						s+= s+= sectoresCarros[i][j].obtenerSector() + "_" + sectoresCarros[i][j].obtenerNumero() + "_" + sectoresCarros[i][j].obtenerOcupantes().datosOcupantes() + "\n";
+					fin sino
+				fin para
+				si (i es diferente de 4)
+					s+= "-" + "\n";
+			fin para
+			s+= "%" + "\n";
+			para (entero i=0; i<2; i++)
+				para (entero j=0; j<100; j++)
+					si (sectoresMotos[i][j].obtenerOcupantes().esVacia())
+						s+= sectoresMotos[i][j].obtenerSector() + "_" + sectoresMotos[i][j].obtenerNumero() + "_" + "no" + "\n";
+					fin si
+					sino
+						s+= sectoresMotos[i][j].obtenerSector() + "_" + sectoresMotos[i][j].obtenerNumero() + "_" + sectoresMotos[i][j].obtenerOcupantes().datosOcupantes() + "\n";
+					fin sino
+				fin para
+				si (i es diferente de 1)
+					s+= "-" + "\n";
+				fin si
+			fin para
+	
+			Archivos.escribirArchivo(s, "Puestos.txt");
+		//-------------------------------------------------------------//
+			//ACTUALIZA ARCHIVO DE PERSONAS
+			s = personas.obtenerDatosPersonas();
+			Archivos.escribirArchivo(s, "Personas.txt");
+		fin sino
+
+		iniciarComponentes();
+		asignarTamaño(488, 660);
+		asignarUbicacionRelativaDe(nulo);
+		JComboDias.asignarVisible(false);
+        	JComboHoras.asignarVisible(false);
+        	jComboMinutos.asignarVisible(false);
+        	text1.asignarVisible(false);
+        	text2.asignarVisible(false);
+        	SubmitButton.asignarVisible(false);
+        	jButtonEditarInfo.asignarVisible(false);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+		archivoPuestos() throws IOException //CARGA INFORMACION DEL ARCHIVO PUESTOS
+			Cadena s = Archivos.leerArchivo("Puestos.txt");
+			si (s = nulo)
+				para (entero i=0; i<5; i++)
+					para (entero j=0; j<500; j++)
+                    				switch (i)
+                        				caso 0:
+                            					s="M";
+                           					 break;
+                        				caso 1:
+                            					s="S";
+                            					break;
+                        				caso 2:
+                            					s="R";
+                            					break;
+                       		 			caso 3:
+                            					s="G";
+                            					break;
+                        				caso 4:
+                            					s="B1";
+                            					break;
+						fin switch
+					sectoresCarros[i][j] = nuevo puestoEst(s, j+1);
+					fin para
+				fin para
+
+				para (entero i=0; i<2; i++)
+                			para (entero j=0; j<100; j++)
+                    				switch (i)
+                        				caso 0:
+                            					s="P";
+                            					break;
+                        				caso 1:
+                            					s="B2";
+                            					break;
+                    				fin switch
+                    				sectoresMotos[i][j]= nuevo puestoEst(s, j+1);
+					fin para
+				fin para
+
+				s="";
+            			para (entero i=0; i<5; i++)
+                			para (entero j=0; j<500; j++)
+                    				s+= sectoresCarros[i][j].obtenerSector() + "_" + sectoresCarros[i][j].obtenerNumero() + "_" + "no" + "\n";
+					fin para
+                			si (i es diferente de 4)
+                    				s+= "-" + "\n";
+					fin si
+ 				fin para
+            			s+= "%" + "\n";
+            			para (entero i=0; i<2; i++){
+                			para (entero j=0; j<100; j++){
+                    				s+= sectoresMotos[i][j].obtenerSector() + "_" + sectoresMotos[i][j].obtenerNumero() + "_" + "no" + "\n";
+                			fin para
+                			si (i es diferente de 1)
+                    				s+= "-" + "\n";
+                			fin si
+				fin para
+                
+            			Archivos.escribirArchivo(s, "Puestos.txt");
+			fin si
+			sino //EN CASO DE NO EXISTIR, LO CREA
+            			Cadena[] arreglosCM = s.split("%\n");
+           			Cadena[] sectoresC = arreglosCM[0].split("-\n");
+            			Cadena[] sectoresM = arreglosCM[1].split("-\n");
+            			Cadena[] puestosP = sectoresM[0].split("\n");
+            			Cadena[] puestosM = sectoresC[0].split("\n");
+            			Cadena[] puestosS = sectoresC[1].split("\n");
+            			Cadena[] puestosR = sectoresC[2].split("\n");
+            			Cadena[] puestosG = sectoresC[3].split("\n");
+            			Cadena[] puestosB1 = sectoresC[4].split("\n");
+            			Cadena[] puestosB2 = sectoresM[1].split("\n");
+            			Cadena[][] pM = nueva Cadena[500][3];
+            			Cadena[][] pS = nueva Cadena[500][3];
+            			Cadena[][] pR = nueva Cadena[500][3];
+            			Cadena[][] pG = nueva Cadena[500][3];
+            			Cadena[][] pB1 = nueva Cadena[500][3];	
+					
+				para (entero i=0; i<500; i++){
+                			pM[i]=puestosM[i].split("_");
+                			pS[i]=puestosS[i].split("_");
+               				pR[i]=puestosR[i].split("_");
+                			pG[i]=puestosG[i].split("_");
+                			pB1[i]=puestosB1[i].split("_");
+				fin para
+				para (cadena[]  p: pM)
+                			sectoresCarros[0][Entero.parseInt(p[1])-1]= nuevo puestoEst(p[0], entero.parseInt(p[1]));
+                			si (!p[2].equals("no"))
+                    				sectoresCarros[0][entero.parseInt(p[1])-1].agregarOcupantes(p[2]);
+					fin si
+				fin para
+				
+				para (cadena[]  p: pS)
+					sectoresCarros[1][entero.parseInt(p[1])-1]= nuevo puestoEst(p[0], entero.parseInt(p[1]));
+                			si (!p[2].equals("no"))
+                    				sectoresCarros[1][entero.parseInt(p[1])-1].agregarOcupantes(p[2]);
+					fin si
+				fin para
+			
+				para (cadena[]  p: pR)
+					sectoresCarros[2][entero.parseInt(p[1])-1]= nuevo puestoEst(p[0], entero.parseInt(p[1]));
+                				si (!p[2].equals("no"))
+                    sectoresCarros[2][entero.parseInt(p[1])-1].agregarOcupantes(p[2]);
+						fin si
+				fin para
+
+				para (cadena[] p: pG)
+					sectoresCarros[3][entero.parseInt(p[1])-1]= nuevo puestoEst(p[0], entero.parseInt(p[1]));
+                			si (!p[2].equals("no"))
+                    				sectoresCarros[3][entero.parseInt(p[1])-1].agregarOcupantes(p[2]);
+					fin si
+				fin para
+				
+				para (cadena[] p: pB1)
+					sectoresCarros[4][entero.parseInt(p[1])-1]= nuevo puestoEst(p[0], entero.parseInt(p[1]));
+                			si (!p[2].equals("no")){
+                    				sectoresCarros[4][entero.parseInt(p[1])-1].agregarOcupantes(p[2]);
+					fin si
+				fin para
+
+				cadena[][] pP = nueva Cadena[100][3];
+				cadena[][] pB2 = nueva Cadena[100][3];
+				para (entero i=0; i<100; i++)
+                			pP[i]=puestosP[i].split("_");
+                			pB2[i]=puestosB2[i].split("_");
+				fin para
+
+				para (cadena[] p: pP)
+					sectoresMotos[0][entero.parseInt(p[1])-1]= nuevo puestoEst(p[0], entero.parseInt(p[1]));
+                			si (!p[2].equals("no"))
+                    				sectoresMotos[0][Entero.parseInt(p[1])-1].agregarOcupantes(p[2]);	
+					fin si
+				fin para
+
+				para (Cadena[] p:pB2
+					sectoresMotos[1][entero.parseInt(p[1])-1]= new puestoEst(p[0], entero.parseInt(p[1]));
+                			si (!p[2].equals("no"))
+                    				sectoresMotos[1][entero.parseInt(p[1])-1].agregarOcupantes(p[2]);
+					fin si
+				fin para
+			fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	archivoTiendas() throws IOException //Carga info del archivo Tiendas.txt
+        	Cadena s = Archivos.leerArchivo("Tiendas.txt");
+        	Cadena[] arrayTiendas = s.split("\n");
+        	entero i=0;
+        	Para (Cadena tienda : arrayTiendas) {
+            		Cadena[] datosTienda = tienda.split("_");
+            		tiendas.insertarTienda(new Tienda(datosTienda[0], datosTienda[1], datosTienda[2], entero.parseInt(datosTienda[3]), datosTienda[4]));
+            		si (i<nombresTiendas.length){
+                		nombresTiendas[i++]=datosTienda[0];
+			fin si
+		fin para
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	archivoPersonas() throws IOException //Carga indo del archivo Personas.txt
+        	Cadena s = Archivos.leerArchivo("Personas.txt");
+        	si(s=nulo || s.equals(""))
+            		Archivos.escribirArchivo("", "Personas.txt"); //Si no existe, lo crea
+            		retorna;
+        	fin si
+        	Cadena[] arrayPersonas = s.split("\n");
+        	Para (Cadena persona : arrayPersonas) 
+            		Cadena[] datosPersona = persona.split("_");
+            		Persona p = nueva Persona(Entero.parseInt(datosPersona[0]), datosPersona[1], datosPersona[2], datosPersona[3], datosPersona[4], datosPersona[5], Entero.parseInt(datosPersona[6]), Entero.parseInt(datosPersona[7]), Entero.parseInt(datosPersona[8]), Entero.parseInt(datosPersona[9]));
+            		si (datosPersona[10].equals("no"))
+                		p.setCarro(nulo);
+            		fin si
+			sino
+                		Cadena[] datosVehiculo = datosPersona[10].split("/");
+                		p.asignarCarro(nuevo Vehiculo(p, datosVehiculo[0], datosVehiculo[1], datosVehiculo[2], datosVehiculo[3]));
+            			si (!datosPersona[11].equals("no")){
+                			Cadena[] datoscompras = datosPersona[11].split("-");
+                			Para (String datoscompra : datoscompras) {
+                    				Cadena[] compra = datoscompra.split("/");
+                    				Compra c = nueva Compra(p, Bienvenido.tiendas.buscarTienda(entero.parseInt(compra[0])), Bienvenido.tiendas.buscarTienda(entero.parseInt(compra[0])).obtenerProductos().buscarProducto(compra[1]), entero.parseInt(compra[2]), Double.parseDouble(compra[3]), compra[4], compra[5]);
+                    				p.obtenerCompras().agregarCompraAlFinal(c);
+                			fin para
+            			fin si
+            			si (p.obtenerID()>=Bienvenido.idPersona)
+                			Bienvenido.idPersona=p.obtenerID()+1;
+            			fin si
+            			personas.insertarPersona(p); //Se insertan las personas en el archivo al arbol AVL
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	entrarActionPerformed                                     
+        	entrar.asignarVisible(false);
+        	entrar.asignarEnabled(false);
+        	JComboDias.asignarVisible(true);
+        	JComboDias.asignarEnabled(true);
+        	text1.asignarVisible(true);
+        	SubmitButton.asignarVisible(true);
+        	SubmitButton.asignarEnabled(false);
+        	jButtonEditarInfo.asignarVisible(true);
+        	jButtonEditarInfo.asignarEnabled(true);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	JComboDiasActionPerformed                                         
+        	JComboHoras.asignarVisible(true);
+        	JComboHoras.asignarEnabled(true);
+        	jComboMinutos.asignarVisible(true);
+        	jComboMinutos.asignarEnabled(true);
+        	text2.asignarVisible(true);
+        	JComboHoras.removerTodosLosItems();
+        	
+		Para (entero i=11; i<21;i++)
+            		JComboHoras.agregarItem(i);
+        	fin para
+
+       	 	switch (JComboDias.getSelectedIndex())
+            		caso 0:
+                		diaActual = "Lunes";
+                		break;
+            		caso 1:
+                		diaActual = "Martes";
+               			break;
+            		caso 2:
+                		diaActual = "Miércoles";
+                		break;
+            		caso 3:
+                		diaActual = "Jueves";
+                		break;
+            		caso 4:
+                		diaActual = "Viernes";
+                		break;
+            		caso 5:
+                		diaActual = "Sábado";
+                		break;
+            		caso 6:
+                		diaActual = "Domingo";
+                		JComboHoras.removerTodosLosItems();
+                		Para(entero i=12; i<20;i++)
+                    			JComboHoras.agregarItem(i);
+				fin para
+                		break;
+        	fin switch
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	JComboHorasActionPerformed                                           
+        	SubmitButton.asignarEnabled(true);
+        	jComboMinutos.removerTodosLosItems();
+        	Para(entero i=0; i<60;i++)
+            		si (i<10)
+                		jComboMinutos.agregarItem("0"+i);
+            			sino
+                			jComboMinutos.agregarItem(Cadena.valueOf(i));
+				fin sino
+           	 	fin si
+        	fin para
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	SubmitButtonActionPerformed                                             
+        	horaActual = entero.parseInt(JComboHoras.obtenerSeleccionItem().toCadena());
+        	minActual = entero.parseInt(jComboMinutos.obtenerSeleccionItem().toCadena());
+        	dispose();
+        	DatosUsuario DU = nuevo DatosUsuario();
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jButtonEditarInfoActionPerformed
+		dispose();
+		menuEditar MU = new menuEditar();
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	main(Cadena args[])
+		run()
+			intentar
+				nuevo Bienvenido().asignarVisible(true);
+				capturar (IOException ex)
+					Logger.obtenerLogger(Bienvenido.clase.obtenerNombre()).log(Level.SEVERE, nulo, ex);
+				fin capturar
+			fin intentar
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+fin clase Bienvenido
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase compra
+	Privado Persona comprador;
+	Privado Tienda tienda;
+	Privado Producto producto;
+	Privado Entero unidades;
+	Privado Doble precioTotal;
+	Privado Cadena tipoCompra;
+	Privado Cadena metodoPago;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Compra (Persona comprador, Tienda tienda, Producto producto, entero unidades, doble precioTotal, Cadena tipoCompra, Cadena métodoPago)
+		comprador = comprador;
+		tienda = tienda;
+		producto = producto; 
+		unidades = unidades;
+		precioTotal = precioTotal;
+		tipoCompra = tipoCompra;
+		metodoPago = metodoPago;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Persona obtenerComprador()
+   		Retorna comprador; 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Tienda obtenerTienda()
+   		Retorna tienda;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Producto obtenerProducto()
+   		Retorna producto;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Entero obtenerUnidades()
+   		Retorna unidades;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Doble obtenerPrecioTotal()
+		Retorna precioTotal;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerTipoCompra()
+   		Retorna tipoCompra;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerMetodoPago()
+   		Retorna metodoPago;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarComprador (Persona comprador)
+   		Comprador = comprador;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarTienda (Tienda tienda)
+   		Tienda = tienda;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarProducto (Producto producto)
+   		Producto = producto;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarUnidades (entero unidades)
+   		Unidades = unidades;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarPrecioTotal (doble precioTotal)
+   		precioTotal = precioTotal;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarTipoCompra (Cadena tipoCompra)
+   		tipoCompra = tipoCompra;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarMetodoPago (Cadena metodoPago)
+   		metodoPago = metodoPago;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase Compra
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio 
+Clase DatosUsuario()
+	Pila usuarioEnSesion = nueva Pila();
+	entero numUsuariosEnSesion = 0;
+	boolean puedeCarro = true;
+	entero hCierre;
+
+	DatosUsuario()
+        	iniciarComponentes();
+        	asignarVisible(true);
+        	asignarTamaño(488, 835); //Tamano de la ventana.
+        	asignarUbicacionRelativaDe(nulo);//PARA UBICAR LA VENTANA EN EL CENTRO
+        	jLabelCampObligatNombre1.asignarVisible(false);
+        	jLabelCampObligatNombre2.asignarVisible(false);
+        	jLabelCampObligatApellido1.asignarVisible(false);
+        	jLabelCampObligatApellido2.asignarVisible(false);
+        	jLabelCampObligatDocumento1.asignarVisible(false);
+        	jLabelCampObligatDocumento2.asignarVisible(false);
+       		jLabelCampObligatPlaca.asignarVisible(false);
+        	jLabelValNombre1.asignarVisible(false);
+        	jLabelValNombre2.asignarVisible(false);
+        	jLabelValApellido1.asignarVisible(false);
+        	jLabelValApellido2.asignarVisible(false);
+        	jLabelValDocumento1.asignarVisible(false);
+        	jLabelValDocumento2.asignarVisible(false);
+        	jLabelValPlaca.asignarVisible(false);
+        	jLabelTVehiculo.asignarVisible(false);
+        	jLabelMarca.asignarVisible(false);
+        	jLabelColor.asignarVisible(false);
+        	jLabelPlaca.asignarVisible(false);
+        	jComboNumAcompanantes.asignarVisible(false);
+        	jComboTVehiculo.asignarVisible(false);
+        	jComboMarca.asignarVisible(false);
+        	jComboColor.asignarVisible(false);
+        	jTextPlaca.asignarVisible(false);
+        	jLabelCAcompanantes1.asignarVisible(false);
+        	jLabelCAcompanantes2.asignarVisible(false);
+
+		si (!puedeCarro) //LOS ACOMPAÑANTES NO LLEVAN CARRO
+			jCheckVehiculo.asignarEnabled(false);
+		fin si
+
+		si (Bienvenido.diaActual.equals("Domingo"))
+			hCierre = 20;
+			sino
+				hCierre = 21;
+			fin sino
+		fin si
+		
+		para(entero i = Bienvenido.horaActual; i<=hCierre; i++)
+			jComboHSalida.agregarItem(i);
+		fin para
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jCheckVehiculoActionPerformed()
+		si(jCheckVehiculo.esSeleccionado())
+            		jLabelTVehiculo.asignarVisible(true);
+            		jLabelMarca.asignarVisible(true);
+            		jLabelColor.asignarVisible(true);
+            		jLabelPlaca.asignarVisible(true);
+            		jComboNumAcompanantes.asignarVisible(true);
+            		jComboNumAcompanantes.asignarEnabled(true);
+            		jComboTVehiculo.asignarVisible(true);
+            		jComboTVehiculo.asignarEnabled(true);
+            		jComboMarca.asignarVisible(true);
+            		jComboMarca.asignarEnabled(true);
+            		jComboColor.asignarVisible(true);
+            		jComboColor.asignarEnabled(true);
+            		jTextPlaca.asignarVisible(true);
+            		jTextPlaca.asignarEnabled(true);
+            		jLabelCAcompanantes1.asignarVisible(true);
+            		jLabelCAcompanantes2.asignarVisible(true);
+		sino
+            		jLabelTVehiculo.asignarVisible(false);
+            		jLabelMarca.asignarVisible(false);
+            		jLabelColor.asignarVisible(false);
+            		jLabelPlaca.asignarVisible(false);
+            		jComboNumAcompanantes.asignarVisible(false);
+            		jComboNumAcompanantes.asignarEnabled(false);
+            		jComboTVehiculo.asignarVisible(false);
+            		jComboTVehiculo.asignarEnabled(false);
+            		jComboMarca.asignarVisible(false);
+            		jComboMarca.asignarEnabled(false);
+            		jComboColor.asignarVisible(false);
+            		jComboColor.asignarEnabled(false);
+            		jTextPlaca.asignarVisible(false);
+            		jTextPlaca.asignarEnabled(false);
+            		jLabelCAcompanantes1.asignarVisible(false);
+            		jLabelCAcompanantes2.asignarVisible(false);
+            		jLabelCampObligatPlaca.asignarVisible(false);
+		fin sino
+		fin si
+
+		//VERIFICAMOS QUE EL NOMBRE SOLO CONTENGA LETRAS Y NO PERMITA QUE EL CAMPO QUEDE VACIO
+		si(jTextNombre.obtenerText().estaVacio()) //METODO PARA VERIFICAR QUE LA CADENA SE ENCUENTRE VACIA	
+			jLabelCampObligatNombre1.asignarVisible(true);
+            		jLabelCampObligatNombre2.asignarVisible(true);
+
+			sino
+				jLabelCampObligatNombre1.asignarVisible(false);
+            			jLabelCampObligatNombre2.asignarVisible(false);
+			fin sino
+			
+			si (!jTextNombre.obtenerText().matches("^[a-zA-Z]+$")){
+                		jLabelValNombre1.asignarVisible(true);
+                		jLabelValNombre2.asignarVisible(true);
+
+				sino
+					jLabelCampObligatNombre1.asignarVisible(false);
+            				jLabelCampObligatNombre2.asignarVisible(false);	
+				fin sino
+			fin si
+		fin si
+
+		//VERIFICAMOS QUE EL APELLIDO SOLO CONTENGA LETRAS Y NO PERMITA QUE EL CAMPO QUEDE VACIO
+		si(jTextApellido.obtenerText().estaVacio()) //METODO PARA VERIFICAR QUE LA CADENA SE ENCUENTRE VACIA	
+			jLabelCampObligatApellido1.asignarVisible(true);
+            		jLabelCampObligatApellido2.asignarVisible(true);
+
+			sino
+				jLabelCampObligatApellido1.asignarVisible(false);
+            			jLabelCampObligatApellido2.asignarVisible(false);
+			fin sino
+			
+			si (!jTextApellido.obtenerText().matches("^[a-zA-Z]+$")){
+                		jLabelValApellido1.asignarVisible(true);
+                		jLabelValApellido2.asignarVisible(true);
+
+				sino
+					jLabelCampObligatApellido1.asignarVisible(false);
+            				jLabelCampObligatApellido2.asignarVisible(false);	
+				fin sino
+			fin si
+		fin si
+		
+		//VERIFICAMOS QUE LA CEDULA SOLO CONTENGA NUMEROS Y NO PERMITA QUE EL CAMPO QUEDE VACIO
+		si(jTextDocumento.obtenerText().estaVacio()) //METODO PARA VERIFICAR QUE LA CADENA SE ENCUENTRE VACIA	
+			jLabelCampObligatDocumento1.asignarVisible(true);
+            		jLabelCampObligatDocumentoo2.asignarVisible(true);
+
+			sino
+				jLabelCampObligatDocumento1.asignarVisible(false);
+            			jLabelCampObligatDocumento2.asignarVisible(false);
+			fin sino
+			
+			si (!jTextDocumento.obtenerText().matches("^[0-9]+$")){
+                		jLabelValDocumento1.asignarVisible(true);
+                		jLabelValDocumento2.asignarVisible(true);
+
+				sino
+					jLabelCampObligatDocumento1.asignarVisible(false);
+            				jLabelCampObligatDocumento2.asignarVisible(false);	
+				fin sino
+			fin si
+		fin si
+		
+		//VERIFICAMOS QUE LA PLACA DEL CARRO SOLO CONTENGA NUMEROS Y LETRAS, Y NO PERMITA QUE EL CAMPO QUEDE VACIO
+		si (jCheckVehiculo.esSeleccionado())
+			si(jTextPlaca.obtenerText().estaVacio()) //METODO PARA VERIFICAR QUE LA CADENA SE ENCUENTRE VACIA	
+				jLabelCampObligatPlaca.asignarVisible(true);
+
+				sino
+					jLabelCampObligatPlaca.asignarVisible(false);
+
+					si (!jTextDocumento.obtenerText().matches("^[A-Z0-9]+$")){
+                				jLabelValPlaca.asignarVisible(true);
+
+						sino
+							jLabelCampObligatPlaca.asignarVisible(false);	
+						fin sino
+					fin si
+				fin sino
+			fin si
+		fin si
+
+		si (jTextNombre.obtenerText().matches("^[a-zA-Z]+$") && jTextApellido.obtenerText().matches("^[a-zA-Z]+$") && jTextDocumento.obtenerText().matches("^[0-9]+$") && jTextPlaca.obtenerText().matches("^[A-Z0-9]*$"))
+            		usuariosEnSesion.agregarPersonaEnLaPila(nueva Persona(Bienvenido.idPersona, jTextNombre.obtenerText(), jTextApellido.obtenerText(), jComboTCI.obtenerSeleccionItem().toCadena(), jTextDocumento.obtenerText(), Bienvenido.diaActual, Bienvenido.horaActual, Bienvenido.minActual, Entero.parseInt(jComboHSalida.obtenerSeleccionItem().toCadena()), Entero.parseInt(jComboMSalida.obtenerSeleccionItem().toCadena())));
+            		Bienvenido.idPersona++;
+            		si (jCheckVehiculo.esSeleccionado())
+                		numUsuariosEnSesion=Entero.parseInt(jComboNumAcompanantes.obtenerSelectedItem().toCadena())+1;
+                		usuariosEnSesion.verTope().asignarCarro(nuevo Vehiculo(usuariosEnSesion.verTope(), jComboTVehiculo.obtenerSeleccionItem().toCadena(), jTextPlaca.obtenerText(), jComboColor.obtenerSeleccionItem().toCadena(), jComboMarca.obtenerSeleccionItem().toCadena()));
+                		dispose();
+                		vEstacionamiento VE = nuevo vEstacionamiento();
+            			Sino
+                			si (jCheckVehiculo.isEnabled())
+                    				numUsuariosEnSesion=1;
+                			fin si
+                			usuariosEnSesion.verTope().asignarCarro(nulo);
+                			entero c=Mostrar en pantalla("¿Desea realizar una compra?", "Seleccione una opción:");
+                			dispose();
+                			si (c=0)
+                    				vCompras VC = nuevo vCompras();
+                				sino si (usuariosEnSesion.obtenerTamaño()<numUsuariosEnSesion)
+                    					puedeCarro=false;
+                    					DatosUsuario DU = nuevo DatosUsuario();
+                					sino
+                    						puedeCarro=true;
+                    						mientras (!DatosUsuario.usuariosEnSesion.esVacia())
+                        						Bienvenido.personas.insertarPersona(DatosUsuario.usuariosEnSesion.sacarPersonaDePila());
+                    						fin mientras
+                    						intentar
+                        						Bienvenido B = nuevo Bienvenido();
+                        						B.asignarVisible(true);
+                    							capturar (IOException ex) 
+                        							Logger.obtenerLogger(DatosUsuario.clase.obtenerName()).log(Level.SEVERE, nulo, ex);
+                    							fin capturar
+								fin intentar
+							fin sino
+						fin si
+						fin sino
+					fin si
+				fin sino
+			fin si
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jComboHSalidaActionPerformed                                            
+        	jComboMSalida.removerTodosLosItems();
+        	si (Entero.parseInt(jComboHSalida.obtenerSeleccionItem().toCadena())==Bienvenido.horaActual)
+			para (entero i=Bienvenido.minActual; i<=59; i++)
+                		si (i<10)
+                    			jComboMSalida.agregarItem("0" + i);
+                			sino
+                    				jComboMSalida.agregarItem(Cadena.valueOf(i));
+					fin sino
+				fin si
+			fin para
+            
+       			sino si (Entero.parseInt(jComboHSalida.obtenerSeleccionItem().toCadena())=hCierre)
+            			jComboMSalida.agregarItem("00");
+        			sino
+            				para (int i=0; i<=59; i++)
+                				si (i<10)
+                    					jComboMSalida.agregarItem("0" + i);
+                					sino
+                    						jComboMSalida.agregarItem(Cadena.valueOf(i));
+							fin sino
+						fin si
+					fin para
+				fin sino
+			fin si
+			fin sino
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase DatosUsuario
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Lista()
+	privado Nodo inicio;
+	privado entero tamaño;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Lista()
+		inicio = nulo;
+		tamaño = 0;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo obtenerInicio()
+		retorna inicio;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	entero obtenerTamaño()
+		retorna tamaño;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	boolean esVacia()
+		retorna inicio = nulo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	agregarPersonaAlFinal(Persona p) //METODO PARA AGREGAR A UNA PERSONA EN LA LISTA
+		Nodo nuevo = nuevo Nodo();
+		nuevo.asignarValorPersona(p);
+		si (esVacia())
+			inicio = nuevo;
+			sino
+				Nodo aux = inicio;
+				mientras (aux.obtenerSiguiente() sea diferente de nulo)
+					aux = aux.obtenerSiguiente();
+				fin mientras
+				aux.asignarSiguiente(nuevo);
+			fin sino
+		fin si
+		tamaño++;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	eliminarPersona(Persona p) //METODO PARA ELIMINAR A UNA PERSONA DE LA LISTA
+		si (!esVacia())
+			si (inicio.obtenerValorPersona().obtenerID() = p.obtenerID())
+				inicio = inicio.obtenerSiguiente();
+				sino
+					Nodo aux = inicio;
+					mientras (aux.obtenerSiguiente() sea diferente de nulo)
+						si (aux.obtenerSiguiente().obtenerValorPersona().obtenerID() = p.obtenerID())
+							aux.asignarSiguiente(aux.obtenerSiguiente().obtenerSiguiente());
+							retorna;
+						fin si
+						aux = aux.obtenerSiguiente();
+					fin mientras
+				fin sino
+			fin si
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	boolean estaOcupado(Persona nuevo) //METODO PARA DETERMINAR SI UN PUESTO ESTA OCUPADO EN LAS HORAS ESTABLECIDAS
+		Nodo aux = inicio;
+		mientras (aux sea diferente de nulo)
+			si(nuevo.obtenerEntrada().equals(aux.obtenerValorPersona().obtenerDEntrada()))
+				//COMPARAMOS DATOS DE ENTRADA
+				si (nuevo.obtenerHEntrada()=aux.obtenerValorPersona().obtenerHEntrada()) //SI LAS HORAS DE ENTRADA COINCIDEN
+					//CASOS MINUTOS: minutos iguales, entrada nueva entre entrada y salida vieja o entrada vieja entre entrada y salida nueva
+					si ((nuevo.obtenerMEntrada()=aux.obtenerValorPersona().obtenerMEntrada()) || (nuevo.obtenerMEntrada()>aux.obtenerValorPersona().obtenerMEntrada() && nuevo.obtenerMEntrada()<aux.obtenerValorPersona().obtenerMSalida()) || (aux.obtenerValorPersona().obtenerMEntrada()>nuevo.obtenerMEntrada() && aux.obtenerValorPersona().obtenerMEntrada()<nuevo.obtenerMSalida()))
+						retorna true; //ESTA OCUPADO EN ESAS HORAS
+					fin si
+				fin si
+				sino
+					//CASOS HORAS: entrada nueva entre entrada y salida vieja o entrada vieja entre entrada y salida nueva
+					si ((nuevo.obtenerHEntrada()>aux.obtenerValorPersona().obtenerHEntrada() && nuevo.obtenerHEntrada()<aux.obtenerValorPersona().obtenerHSalida()) || (aux.obtenerValorPersona().obtenerHEntrada()>nuevo.obtenerHEntrada() && aux.obtenerValorPersona().obtenerHEntrada()<nuevo.obtenerHSalida()))
+						retorna true; //ESTA OCUPADO A ESAS HORAS
+					fin si
+				fin sino
+
+				//DESPUES COMPARAMOS DATOS DE SALIDA:
+				si (nuevo.obtenerHSalida()==aux.obtenerValorPersona().obtenerHSalida()) //SI LAS HORAS DE SALIDA COINCIDEN
+					//CASOS MINUTOS: minutos iguales, salida nueva entre entrada y salida vieja o salida vieja entre entrada y salida nueva
+					si ((nuevo.obtenerMSalida()==aux.obtenerValorPersona().obtenerMSalida()) || (nuevo.obtenerMSalida()>aux.obtenerValorPersona().obtenerMEntrada() && nuevo.obtenerMSalida()<aux.obtenerValorPersona().obtenerMSalida()) || (aux.obtenerValorPersona().obtenerMSalida()>nuevo.obtenerMEntrada() && aux.obtenerValorPersona().obtenerMSalida()<nuevo.obtenerMSalida()))
+						retorna true; //ESTA OCUPADO EN ESAS HORAS
+					fin si
+				fin si
+				sino
+					//CASOS HORAS: salida nueva entre entrada y salida vieja o salida vieja entre entrada y salida nueva
+					si ((nuevo.obtenerHSalida()>aux.obtenerValorPersona().obtenerHEntrada() && nuevo.obtenerHSalida()<aux.obtenerValorPersona().obtenerHSalida()) || (aux.obtenerValorPersona().obtenerHSalida()>nuevo.obtenerHEntrada() && aux.obtenerValorPersona().obtenerHSalida()<nuevo.obtenerHSalida()))
+						retorna true; //ESTA OCUPADO EN ESAS HORAS.
+					fin si
+				fin sino
+			fin si
+			aux = aux.obtenerSiguiente();
+		fin mientras
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena datosOcupantes() //PARA CONSEGUIR LOS DATOS DE LOS OCUPANTES DE UN PUESTO EN UNA CADENA
+		si (esVacia())
+			retorna nulo;
+		fin si
+		
+		cadena s = "";
+		Nodo aux = inicio;
+		mientras (aux sea diferente de nulo)
+			s+= aux.obtenerValorPersona().obtenerID() + "/" + aux.obtenerValorPersona().obtenerNombre() + "/" + aux.obtenerValorPersona().obtenerApellido() + "/" + aux.obtenerValorPersona().obtenerTci() + "/" + aux.obtenerValorPersona().obtenerCi() + "/" + aux.obtenerValorPersona().obtenerDEntrada() + "/" + aux.obtenerValorPersona().obtenerHEntrada() + "/" + aux.obtenerValorPersona().obtenerMEntrada() + "/" + aux.obtenerValorPersona().obtenerHSalida() + "/" + aux.obtenerValorPersona().obtenerMSalida() + "/" + aux.obtenerValorPersona().obtenerCarro().obtenerTipo() + "/" + aux.obtenerValorPersona().obtenerCarro().obtenerPlaca() + "/" + aux.obtenerValorPersona().obtenerCarro().obtenerColor() + "/" + aux.obtenerValorPersona().obtenerCarro().obtenerMarca();
+			si (aux.obtenerSiguiente() es diferente de nulo)
+				s+="~";
+			fin si
+			aux = aux.obtenerSiguiente();
+		fin mientras
+		return s;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	agregarProductoAlFinal(Producto p) //METODO PARA AGREGAR UN PRODUCTO AL FINAL DE LA LISTA.
+		Nodo nuevo = nuevo Nodo();
+		nuevo.asignarValorProducto(p);
+		si (esVacia())
+			inicio = nuevo;
+		fin si
+		sino
+			Nodo aux = inicio;
+			mientras (aux.obtenerSiguiente() sea diferente a nulo)
+				aux = aux.obtenerSiguiente();
+			fin mientras
+			aux.asignarSiguiente(nuevo);
+		fin sino
+		tamaño++;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Producto[] obtenerArrayProductos() //CONVERTIMOS LA LISTA EN UN ARRAY
+		Producto[] arrayProductos = nuevo Producto[tamaño];
+		si (esVacia())
+			retorna nulo;
+		fin si
+		sino
+			Nodo aux = inicio;
+			para (entero i = 0; i<tamaño; i++)
+				arrayProductos[i] = aux.obtenerValorProducto();
+				aux = aux.obtenerSiguiente();
+			fin para
+			retorna arrayProductos;
+		fin sino
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Producto buscarProducto(cadena nombreP) //PARA BUSCAR UN PRODUCTO EN LA LISTA
+		si (esVacia())
+			retorna nulo;
+		fin si
+		sino
+			Nodo aux = inicio;
+			mientras (aux sea diferente de nulo)
+				si (aux.obtenerValorProducto().obtenerNombre().equals(nombreP))
+					retorna aux.obtenerValorProducto();
+				fin si
+			fin mientras
+			retorna nulo;
+		fin sino
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	agregarCompraAlFinal(Compra c) //PARA AGREGAR UNA COMPRA AL FINAL DE LA LISTA
+		Nodo nuevo = nuevo Nodo();
+		nuevo.asignarValorCompra(c);
+		si (esVacia())
+			inicio = nuevo;
+		fin si
+		sino
+			Nodo aux = inicio;
+			mientras (aux.obtenerSiguiente() sea diferente de nulo)
+				aux = aux.obtenerSiguiente();
+			fin mientras
+			aux.asignarSiguiente(nuevo);
+		fin sino
+		tamaño++;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	eliminarCompra(Compra c) //PARA ELIMINAR UNA COMPRA DE LA LISTA
+		si (!esVacia()) 
+			si (inicio.obtenerValorCompra().obtenerProducto().obtenerNombre().equals(c.obtenerProducto().obtenerNombre()))
+				inicio = inicio.obtenerSiguiente();
+			fin si
+			sino
+				Nodo aux = inicio;
+				mientras (aux.obtenerSiguiente() sea diferente de nulo)
+					si (aux.obtenerSiguiente().obtenerValorCompra().obtenerProducto().obtenerNombre().equals(c.obtenerProducto().obtenerNombre()))
+						aux.asignarSiguiente(aux.obtenerSiguiente().obtenerSiguiente());
+						retorna;
+					fin si
+					aux = aux.obtenerSiguiente();
+				fin mientras
+			fin sino
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	cadena datosCompra() //PARA ALMACENAR LOS DATOS DE LAS COMPRAS DE UNA PERSONA EN UNA CADENA
+		si (esVacia())
+			retorna "no";
+		fin si
+
+		cadena s = "";
+		Nodo aux = inicio;
+		mientras (aux sea diferente de nulo)
+			s+= aux.obtenerValorCompra().obtenerTienda().obtenerLocal() + "/" + aux.obtenerValorCompra().obtenerProducto().obtenerNombre() + "/" + aux.obtenerValorCompra().obtenerUnidades() + "/" + aux.obtenerValorCompra().obtenerPrecioTotal() + "/" + aux.obtenerValorCompra().obtenerTipoCompra() + "/" + aux.obtenerValorCompra().obtenerMetodoPago();
+			si (aux.obtenerSiguiente() es diferente de nulo)
+				s+="-";
+			fin si
+			aux = aux.obtenerSiguiente();
+		fin mientras
+		retorna s;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	boolean existeOcupante(Persona persona) //PARA DETERMINAR SI LA PERSONA ESTA OCUPANDO ESE PUESTO
+		si (esVacia())
+			retorna false;
+		fin si
+		sino
+			Nodo aux = inicio;
+			mientras(aux sea diferente de nulo)
+				si (aux.obtenerValorPersona().obtenerID() = persona.ObtenerID())
+					retorna true;
+				fin si
+				aux = aux.obtenerSiguiente();
+			fin mientras
+			retorna false;
+		fin sino
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Compra[] obtenerArrayCompras() //PARA CONVERTIR LA LISTA DE COMPRAS EN UN ARRAY
+		si (esVacia())
+			retorna nulo;
+		fin si
+		sino
+			compra[] compras = nuevo Compra[tamaño];
+			Nodo aux = inicio;
+			entero i = 0;
+			mientras(aux sea diferente de nulo)	
+				compras[i++] = aux.obtenerValorCompra();
+				aux = aux.obtenerSiguiente();
+			fin mientras
+			return compras;
+		fin sino
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase Lista
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase MenuCompra
+	Tienda tiendaSeleccionada = vCompras.tiendaSeleccionada;
+    	Persona personaActual = DatosUsuario.usuariosEnSesion.verTope();
+    	Producto productoSeleccionado;
+    	entero unidades;
+    	double precioTotal;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	MenuCompra()
+        	jLabelNombreTienda.asignarText(vCompras.tiendaSeleccionada.obtenerNombre());
+        	para(entero i=0; i<vCompras.tiendaSeleccionada.obtenerProductos().obtenerTamaño(); i++)
+            		jComboProductos.agregarItem(vCompras.tiendaSeleccionada.obtenerProductos().obtenerArrayProductos()[i].obtenerNombre());
+        	fin para
+        	jLabelFoto.asignarIcon(determinarLogo(tiendaSeleccionada.obtenerLocal()));
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Icon determinarLogo(entero numLocal) //Para determinar el logo de la tienda que debe mostrarse
+		switch(numLocal)
+            		case 1:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Multimax.png"));
+            		case 2:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/GamePlanet.png"));
+            		case 3:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Her&Him.png"));
+            		case 4:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Koko_Superstore.png"));
+            		case 5:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Blasco_Joyeria.png"));
+            		case 6:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Unilook.png"));
+            		case 7:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Blackphone.png"));
+            		case 8:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Mundo_Virtual.png"));
+            		case 9:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Ecomascotas.png"));
+            		case 10:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Rori.png"));
+            		case 11:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Aero_store.png"));
+            		case 12:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Girl_MissLulu.png"));
+            		case 13:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Baby_Love.png"));
+            		case 14:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/City_movil.png"));
+            		case 15:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Carolina_Herrera.png"));
+            		case 16:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Sunglass.png"));
+            		case 17:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Fitlab.png"));
+            		case 18:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Oro_margarita.png"));
+            		case 19:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Wrangler.png"));
+            		case 20:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/BANDOLERA.png"));
+            		case 21:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Champions.png"));
+            		case 22:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Mele_Divani.png"));
+            		case 23:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/GSL.png"));
+            		case 24:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Tarbay.png"));
+            		case 25:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Marisol_import.png"));
+            		case 26:
+               			retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/lucy_lingeries.png"));
+            		case 27:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Ferremetro.png"));
+            		case 28:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Sigo.png"));
+            		case 29:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Karamba_ninos.png"));
+            		case 30:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Nivel_surf.png"));
+            		case 31:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Nice_Toys.png"));
+            		case 32:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Monikerias.png"));
+            		case 33:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/cerere.png"));
+            		case 34:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Miss_lulu.png"));
+            		case 35:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Tech_Star.png"));
+            		case 36:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Go_sport.png"));
+            		case 37:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Sweet_Ice.png"));
+            		case 38:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Perfumes_factory.png"));
+            		case 39:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Alta_vision.png"));
+            		case 40:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Mario_Hernandez.png"));
+            		case 41:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/DIGITEC.png"));
+            		case 42:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Isha_Accessories.png"));
+            		case 43:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/McPostres.png"));
+            		case 44:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Samsung.png"));
+            		case 45:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Poker_plus.png"));
+            		case 46:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Mundo_escolar.png"));
+            		case 47:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Shoe_Box.png"));
+            		case 48:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/FLB.png"));
+            		case 49:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/AQUA.png"));
+            		case 50:
+               			retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Grupo_Selecto's.png"));
+            		case 51:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Galaxy.png"));
+            		case 52:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Stylo_Import.png"));
+            		case 53:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Fashion_world.png"));
+            		case 54:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Techzone.png"));
+            		case 55:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Sporty_World.png"));
+            		case 56:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Rodito.png"));
+            		case 57:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/McDonald's.png"));
+            		case 58:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Arturos.png"));
+            		case 59:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Accessories_Galore.png"));
+            		case 60:
+                		retornar nueva ImageIcon(obtenerClass().obtenerResource("/Imagenes/Glamour_Beauty.png"));
+            		default: retorna nulo;
+		fin switch
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jComboProductosActionPerformed                                             
+        	productoSeleccionado = vCompras.tiendaSeleccionada.obtenerProductos().buscarProducto(jComboProductos.obtenerSeleccionItem().toCadena());
+        	jTextAreaDescripcion.asignarText(productoSeleccionado.obtenerDescripcion());
+        	jLabelPrecio.asignarText("Precio: " + productoSeleccionado.obtenerPrecio() + "$");
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jRadioButtonCOnlineActionPerformed                                                  
+        	jComboMetodoPago.removerTodosLosItems();
+        	jComboMetodoPago.agregarItem("Zelle");
+        	jComboMetodoPago.agregarItem("PagoMovil");
+        	jComboMetodoPago.agregarItem("Transferencia");
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jRadioButtonCPresencialActionPerformed                                                       
+        	jComboMetodoPago.removerTodosLosItems();
+        	jComboMetodoPago.agregarItem("Efectivo");
+        	jComboMetodoPago.agregarItem("TDC");
+        	jComboMetodoPago.agregarItem("TDD");
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jTextUnidadesActionPerformed                                              
+        	si(!jTextUnidades.obtenerText().matches("^[0-9]+$") && entero.parseInt(jTextUnidades.obtenerText())=0){
+            		jLabel3.asignarText("Total:");
+            		jTextUnidades.asignarForeground(Color.red);
+        		sino
+            			jTextUnidades.asignarForeground(Color.black);
+            			unidades = entero.parseInt(jTextUnidades.obtenerText());
+            			precioTotal = unidades*productoSeleccionado.obtenerPrecio();
+            			jLabel3.asignarText("Total: " + precioTotal + "$");
+			fin sino
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt)                                                  
+        	si (jTextUnidades.obtenerText().matches("^[1-9]+$") && (jRadioButtonCOnline.esSeleccionado() || jRadioButtonCPresencial.esSeleccionado()) && !jLabel3.obtenerText().equals("Total:"))
+            		si(jRadioButtonCOnline.esSeleccionado())
+                		personaActual.obtenerCompras().agregarCompraAlFinal(nueva Compra(personaActual, tiendaSeleccionada, productoSeleccionado, unidades, precioTotal, jRadioButtonCOnline.obtenerText(), jComboMetodoPago.obtenerSeleccionItem().toCadena()));
+            		fin si
+			sino
+                		personaActual.obtenerCompras().agregarCompraAlFinal(nueva Compra(personaActual, tiendaSeleccionada, productoSeleccionado, unidades, precioTotal, jRadioButtonCPresencial.obtenerText(), jComboMetodoPago.obtenerSeleccionItem().toCadena()));
+           
+            			entero c=Mostrar en pantalla("¿Desea realizar otra compra?", "Seleccione una opción:", mostrar opcion SI_NO);
+            			si (c=0)
+                			vCompras VC = nueva vCompras();
+            			fin si
+				sino
+                			si (DatosUsuario.usuariosEnSesion.obtenerTamaño()<DatosUsuario.numUsuariosEnSesion)
+                    				DatosUsuario.puedeCarro=false;
+                    				DatosUsuario DU = nuevo DatosUsuario();
+                			fin si
+					sino
+                    				DatosUsuario.puedeCarro=true;
+                    				mientras (!DatosUsuario.usuariosEnSesion.esVacia())
+                        				Bienvenido.personas.insertarPersona(DatosUsuario.usuariosEnSesion.sacarPersonaDePila());
+                    				fin mientras
+                    				intentar
+                        				Bienvenido B = nuevo Bienvenido();
+                        				B.asignarVisible(true);
+                    				Capturar (IOException ex) 
+                        				Logger.obtenerLogger(DatosUsuario.clase.obtenerName()).log(Level.SEVERE, nulo, ex);
+                    				fin capturar
+						fin intentar
+					fin sino
+				fin sino
+			fin sino
+			dispose();
+		fin si
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	main (Cadena args[])
+		run()
+			nuevo MenuCompra().asignarVisible(true);
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase MenuCompra
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Nodo
+
+	Privado Persona valorPersona;
+	Privado Producto valorProducto;
+	Privado Tienda valorTienda;
+	Privado Compra valorCompra;
+	Privado Nodo siguiente, der, izq;
+	Privado entero altura;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo()
+		valorPersona = nulo;
+		valorProducto = nulo;
+		valorCompra = nulo;
+		siguiente = nulo;
+		der = nulo;
+		izq = nulo; 
+		altura = 1;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarDer (Nodo der)
+		der = der;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarIzq (Nodo izq)
+		izq = izq;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarValorPersona (Persona valorPersona)
+		valorPersona = valorPersona;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarValorProducto (Producto valorProducto)
+		valorProducto = valorProducto;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarValorTienda (Tienda ValorTienda)
+		valorTienda = valorTienda;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarValorCompra (Compra valorCompra)
+		valorCompra = valorCompra;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarSiguiente (Nodo siguiente)
+		siguiente = siguiente;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Persona obtenerValorPersona()
+		Retorna valorPersona;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Producto obtenerValorProducto()
+		Retorna valorProducto;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Tienda obtenerValorTienda()
+		Retorna valorTienda;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Compra obtenerValorCompra()
+		Retorna valorCompra;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo obtenerSiguiente()
+		Retorna siguiente; 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo obtenerDer()
+		Retorna der;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Nodo obtenerIzq()
+		Retorno izq;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Entero obtenerAltura (Nodo nodo)
+		Si (nodo = nulo)
+			Retorna 0;
+		fin si
+		Retorna nodo.altura;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarAltura (entero altura)
+		altura = altura;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase Nodo
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Persona
+	Privado entero ID;
+	Privado Cadena nombre;
+	Privado Cadena apellido; 
+	Privado Cadena tci;
+	Privado Cadena ci;
+	Privado Vehículo carro;
+	Privado Cadena dEntrada;
+	Privado entero hEntrada;
+	Privado entero mEntreda;
+	Privado entero hSalida;
+	Privado entero mSalida;
+	Privado Lista Compras;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Persona (entero id, cadena nombre, cadena apellido, cadena tci, cadena ci, cadena dEntrada, entero hEntrada, entero mEntrada, entero hSalida, entero mSalida)
+		ID = id;
+		nombre = nombre;
+		apellido = apellido; 
+		tci = tci;
+		ci = ci;
+		carro = nulo;
+		dEntrada = dEntrada;
+		hEntrada = hEntrada;
+		mEntrada = mEntrada;
+		hSalida = hSalida;
+		mSalida = mSalida;
+		Compras = nueva lista ();
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	entero obtenerID()
+		Retorna ID;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerNombre()
+		Retorna nombre;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerApellido()
+		Retorna apellido;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerTci()
+		Retorna tci;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerCi()
+		Retorna ci;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Vehículo obtenerCarro()
+		Retorna carro;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Cadena obtenerDEntrada()
+		Retorna dEntrada;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Entero obtenerHEntrada()
+		Retorna hEntrada;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Entero obtenerHSalida()
+		Retorna hSalida;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Entero obtenerMEntrada()
+		Retorna mEntrada;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Entero obtenerMSalida()
+		Retorna mSalida;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Lista obtenerCompras()
+		Retorna Compras;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarNombre (Cadena nombre)
+		Nombre = nombre;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarApellido (Cadena apellido)
+		Apellido = apellido; 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarTci (Cadena tci)
+		tci = tci;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarCi (Cadena ci)
+		ci = ci;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarCarro (Vehículo carro)
+		carro = carro; 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarDEntrada (Cadena dEntrada) 
+		dEntrada= dEntrada;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarHEntrada (entero hEntrada)
+		hEntrada = hEntrada;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarHSalida (entero hSalida)
+		hSalida = hSalida;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarMEntrada (entero mEntrada)
+		mEntrada = mEntrada; 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	AsignarMSalida (entero mSalida)
+		mSalida = mSalida;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase Persona
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Pila
+	privado Nodo tope;
+	privado entero tamaño;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Pila()
+		tope = nulo;
+		tamaño = 0;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	boolean esVacia() //DETERMINAMOS SI LA PILA ESTÁ VACÍA
+		return tope=nulo;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	entero obtenerTamaño()
+        	retorna tamaño;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//   
+    	agregarPersonaEnLaPila(Persona valorPersona) //Metodo para agregar personas a la pila.
+        Nodo nuevo=nuevo Nodo();
+        nuevo.asignarValorPersona(valorPersona);
+        	si (esVacia())
+            		tope=nuevo;
+		fin si
+        	sino
+            		nuevo.asignarSiguiente(tope);
+            		tope=nuevo;
+		fin sino
+		tamaño++;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	Persona sacarPersonaDePila() //Metodo para sacar una persona de la pila.
+        	Persona valorPersona=nulo;
+        	si (!esVacia())
+            		valorPersona=tope.obtenerValorPersona();
+            		tope=tope.obtenerSiguiente();
+            		tamaño--;
+        	fin si
+        	retorna valorPersona;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+    	Persona verTope(){ //para ver el tope sin retirarlo
+        	si (esVacia()){
+            		retorna nulo;
+        	fin si
+		sino
+            		retorna tope.obtenerValorPersona();
+		fin sino
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+Fin clase Pila
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase Producto 
+	Privado Cadena nombre;
+	Privado Cadena descripción;
+	Privado doble precio;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Producto (Cadena nombre, Cadena descripción, doble precio)
+		nombre = nombre;
+		descripción = descripción;
+		precio = precio;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Cadena obtenerNombre()
+		Retorna nombre;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Cadena obtenerDescripción()
+		Retorna descripción;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Doble obtenerPrecio()
+		Retorna precio;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	AsignarNombre (Cadena nombre)
+		nombre = nombre;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	AsignarDescripcion (Cadena descripción)
+		descripción = descripción;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	AsignarPrecio (doble precio)
+		precio = precio;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+Fin clase producto
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase tienda
+	privado cadena nombre;
+	privado cadena encargado;
+	privado cadena ubicacion;
+	privado entero local;
+	privado Lista productos;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Tienda(Cadena nombre, cadena encargado, cadena ubicacion, entero local, cadena productos)
+		nombre = nombre;
+		encargado = encargado;
+		ubicacion = ubicacion;
+		local = local;
+		productos = nueva Lista();
+		
+		Cadena[] arrayProductos = productos.split("-"); //Para cargar la lista de productos del archivo
+		para (cadena datosProductos : arrayProductos)
+			cadena[] datProd = datosProductos.split("/");
+			producto p = nuevo producto(datProd[0], datProd[1], double.parseDouble(datProd[2]));
+		fin para
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	cadena obtenerNombre()
+		retorna nombre;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	cadena obtenerEncargado()
+		retorna encargado;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	cadena obtenerUbicacion()
+		retorna ubicacion;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	entero obtenerLocal()
+		retorna Local;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Lista obtenerProductos()
+		retorna productos;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	asignarNombre(cadena nombre)
+		nombre = nombre;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	asignarEncargado(cadena encargado)
+		encargado = encargado;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	asignarUbicacion(cadena ubicacion)
+		ubicacion = ubicacion;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	asiganrLocal(entero Local)
+		local = local;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+Fin clase Tienda
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio 
+Clase Vehículo
+	Privado Persona dueño;
+	Privado Cadena tipo;
+	Privado Cadena placa;
+	Privado Cadena color;
+	Privado Cadena marca;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Vehículo (Persona dueño, Cadena tipo, Cadena placa, Cadena color, Cadena marca)
+		dueño = dueño;
+		tipo = tipo;
+		placa = placa;
+		color = color;
+		marca = marca;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Persona obtenerDueño()
+		Retorna dueño; 
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Cadena obtenerTipo()
+		Retorna tipo;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	Cadena obtenerPlaca()
+		Retorna placa;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Cadena obtenerColor()
+		Retorna color;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------// 
+	Cadena obtenerMarca()
+		Retorna marca;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	AsignarDueño (Persona dueño)
+		dueño = dueño;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	AsignarTipo (Cadena tipo)
+		tipo = tipo; //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	AsignarPlaca (Cadena placa)
+		placa = placa;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	AsignarColor (Cadena color)
+		color = color;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//   
+	AsignarMarca (Cadena marca) 
+		marca = marca;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+Fin clase Vehiculo
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase menuEditar
+	Pila coincidencias;
+    	Persona[] arrayPersonas;
+    	Persona p;
+    	puestoEst puesto;
+    	Compra[] compras;
+    	Producto[] productos;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//  
+	menuEditar()
+		coincidencias = nueva Pila();
+        	initComponents();
+        	setVisible(true);
+        	setSize(916, 575); //Tamano de la ventana.
+        	setLocationRelativeTo(null); //Para que la ventana se ubique en el centro de la pantalla.
+        	jPanelBorrar.asignarVisible(false);
+        	jButtonEliminar.asignarVisible(false);
+        	jButtonConfirmarC.asignarVisible(false);
+        	jPanelOcupado.asignarVisible(false);
+        	jRadioButtonNombreApellido.asignarSeleccion(true);
+        	jLabelDocumento.asignarVisible(false);
+        	jLabelDia.asignarVisible(false);
+        	jComboDia.asignarVisible(false);
+        	jComboDia.asignarEnabled(false);
+        	jPanelCoincidencia.asignarVisible(false);
+        	jComboCoincidencias.asignarVisible(false);
+        	jComboTCI.asignarVisible(false);
+        	jLabelHEntrada1.asignarVisible(false);
+        	jLabelHEntrada2.asignarVisible(false);
+        	jComboHEntrada.asignarVisible(false);
+        	jComboMEntrada.asignarVisible(false);
+        	jLabelNombre.setVisible(false);
+        	jLabelApellido.setVisible(false);
+        	jTextFieldNombre.setVisible(false);
+        	jTextFieldApellido.setVisible(false);
+        	jComboBoxTCI.setVisible(false);
+        	jTextFieldCI.setVisible(false);
+        	jLabelHSalida1.setVisible(false);
+        	jLabelHSalida2.setVisible(false);
+        	jComboHSalida.setVisible(false);
+        	jComboMSalida.setVisible(false);
+        	jCheckBoxVehiculo.setVisible(false);
+        	jLabelTVehiculo1.setVisible(false);
+        	jLabelTVehiculo2.setVisible(false);
+        	jLabel1.setVisible(false);
+        	jLabel3.setVisible(false);
+        	jLabel6.setVisible(false);
+        	jComboTVehiculo.setVisible(false);
+        	jLabelMarca.setVisible(false);
+        	jComboMarca.setVisible(false);
+        	jLabelColor.setVisible(false);
+        	jComboColor.setVisible(false);
+        	jLabelPlaca.setVisible(false);
+        	jTextFieldPlaca.setVisible(false);
+        	jLabelPuesto.setVisible(false);
+        	jComboSector.setVisible(false);
+        	jComboNPuesto.setVisible(false);
+        	ActionListener[] tiendas = jComboTiendas.obtenerActionListeners();
+        	jComboTiendas.removeActionListener(tiendas[0]);
+		para (entero i=0; i<Bienvenido.nombresTiendas.length; i++)
+            		jComboTiendas.addItem(Bienvenido.nombresTiendas[i]);
+		fin para
+        	jComboTiendas.addActionListener(tiendas[0]);
+        	jComboCompra.setVisible(false);
+        	jComboTiendas.setVisible(false);
+        	jComboProductos.setVisible(false);
+        	jLabelTotal.setVisible(false);
+        	jTextUnidades.setVisible(false);
+        	jRadioButtonOnline.setVisible(false);
+        	jRadioButtonPresencial.setVisible(false);
+        	jLabelPrecio.setVisible(false);
+        	jComboMetodoPago.setVisible(false);
+        	jLabelNCompra.setVisible(false);
+        	jLabelTienda.setVisible(false);
+        	jLabelProducto.setVisible(false);
+        	jLabelMPago.setVisible(false);
+        	jLabelUnidades.setVisible(false);
+        	jLabelTCompra.setVisible(false);
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	puestoEst encontrarPuesto(Persona persona) //Para conseguir el puesto que esta siendo usada por la persona
+        para(entero i=0; i<5; i++)
+        	para (entero j=0; j<500; j++)
+                	si(Bienvenido.sectoresCarros[i][j].obtenerOcupantes().existeOcupante(persona))
+                    		retorna Bienvenido.sectoresCarros[i][j];
+			fin si
+		fin para
+	fin para
+        
+        para(entero i=0; i<2; i++){
+        	para(entero j=0; j<100; j++){
+                	si (Bienvenido.sectoresMotos[i][j].obtenerOcupantes().existeOcupante(persona)){
+                    		retorna Bienvenido.sectoresMotos[i][j];
+			fin si
+		fin para
+	fin para
+        retorna nulo;	
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jButtonBuscarActionPerformed                                             
+        	boolean valido = false;
+        		si (jRadioButtonNombreApellido.esSeleccionado())
+            			si(jTextBuscar1.obtenerText().matches("^[a-zA-Z]+$") && jTextBuscar2.obtenerText().matches("^[a-zA-Z]+$"))
+                			valido = true;
+                			jTextBuscar1.asignarForeground(Color.black);
+                			jTextBuscar2.asignarForeground(Color.black);
+           			fin si
+				sino
+                			si(!jTextBuscar1.obtenerText().matches("^[a-zA-Z]+$")){
+                    				jTextBuscar1.asignarForeground(Color.red);
+               				fin si
+					sino
+                    				jTextBuscar1.asignarForeground(Color.black);
+					fin sino
+                				si (!jTextBuscar2.obtenerText().matches("^[a-zA-Z]+$"))
+                    					jTextBuscar2.asignarForeground(Color.red);
+                				fin si
+						sino
+                    					jTextBuscar2.asignarForeground(Color.black);
+                				fin sino
+				fin sino
+			fin si
+			
+			si (jRadioButtonDocumento.eSeleccionado()){
+            			si (jTextBuscar1.obtenerText().matches("^[0-9]+$")){
+                			valido = true;
+                			jTextBuscar1.asignarForeground(Color.black);
+            			fin si
+				sino
+                			jTextBuscar1.asignarForeground(Color.red);
+				fin sino
+			fin si
+		
+			si (valido)
+				ActionListener[] Coincidencias = jComboCoincidencias.obtenerActionListeners();
+            			jComboCoincidencias.removerAccionListener(Coincidencias[0]);
+            			jComboCoincidencias.removerTodosLosItems();
+            			mientras(!coincidencias.esVacia())
+                			coincidencias.sacarPersonaDePila();
+            			fin mientras
+            			arrayPersonas=nulo;
+            			si(jRadioButtonDocumento.esSeleccionado())
+                			Bienvenido.personas.buscarPorCI(jComboTCI.obtenerSeleccionItem().toCadena()+jTextBuscar1.obtenerText());
+            			fin si
+				sino
+                			Bienvenido.personas.buscarPorNombre(jTextBuscar1.obtenerText() + " " + jTextBuscar2.obtenerText());
+           			fin sino
+				
+				jPanelCoincidencia.asignarVisible(true);
+            			si(!coincidencias.esVacia()){
+                			Persona[] arrayP = nueva Persona[coincidencias.obtenerTamaño()];
+                			arrayPersonas = arrayP;
+                			Para(entero i=0; i<arrayP.length; i++)
+                    				arrayP[i] = coincidencias.sacarPersonaDePila();
+                    				Si (arrayP[i].obtenerMEntrada()<10)
+                     					jComboCoincidencias.agregarItem(arrayP[i].obtenerDEntrada() + " " + arrayP[i].obtenerHEntrada() + ":0" + arrayP[i].obtenerMEntrada());
+                    				fin si
+						sino
+                        				jComboCoincidencias.agregarItem(arrayP[i].obtenerDEntrada() + " " + arrayP[i].obtenerHEntrada() + ":" + arrayP[i].obtenerMEntrada());
+                    				fin sino
+                			fin para
+                			jLabelCoincidencia.asignarText("Se consiguieron coincidencias en las siguientes fechas:");
+                			jComboCoincidencias.asignarEnabled(true);
+                			jComboCoincidencias.asignarVisible(true);
+				fin si
+				sino
+					jLabelCoincidencia.setText("No se consiguieron coincidencias.");
+                			jPanelOcupado.setVisible(false);
+                			jLabelDocumento.setVisible(false);
+                			jComboCoincidencias.setEnabled(false);
+                			jComboCoincidencias.setVisible(false);
+                			jLabelDia.setVisible(false);
+                			jComboDia.setVisible(false);
+                			jComboDia.setEnabled(false);
+                			jLabelHEntrada1.setVisible(false);
+                			jLabelHEntrada2.setVisible(false);
+               	 			jComboHEntrada.setVisible(false);
+                			jComboHEntrada.setEnabled(false);
+                			jComboMEntrada.setVisible(false);
+                			jComboMEntrada.setEnabled(false);
+                			jLabelNombre.setVisible(false);
+                			jLabelApellido.setVisible(false);
+                			jTextFieldNombre.setVisible(false);
+                			jTextFieldNombre.setEnabled(false);
+                			jTextFieldApellido.setVisible(false);
+                			jTextFieldApellido.setEnabled(false);
+               		 		jComboBoxTCI.setVisible(false);
+                			jComboBoxTCI.setEnabled(false);
+                			jTextFieldCI.setVisible(false);
+                			jTextFieldCI.setEnabled(false);
+                			jLabelHSalida1.setVisible(false);
+                			jLabelHSalida2.setVisible(false);
+                			jComboHSalida.setVisible(false);
+                			jComboHSalida.setEnabled(false);
+                			jComboMSalida.setVisible(false);
+                			jComboMSalida.setEnabled(false);
+                			jLabel1.setVisible(false);
+                			jLabel3.setVisible(false);
+                			jLabel6.setVisible(false);
+                			jCheckBoxVehiculo.setVisible(false);
+                			jComboBoxTCI.setEnabled(false);
+                			jLabelTVehiculo1.setVisible(false);
+                			jLabelTVehiculo2.setVisible(false);
+                			jComboTVehiculo.setVisible(false);
+                			jComboTVehiculo.setEnabled(false);
+                			jLabelMarca.setVisible(false);
+                			jComboMarca.setVisible(false);
+                			jComboMarca.setEnabled(false);
+                			jLabelColor.setVisible(false);
+                			jComboColor.setVisible(false);
+                			jComboColor.setEnabled(false);
+                			jLabelPlaca.setVisible(false);
+                			jTextFieldPlaca.setVisible(false);
+                			jTextFieldPlaca.setEnabled(false);
+                			jLabelPuesto.setVisible(false);
+                			jComboSector.setVisible(false);
+                			jComboSector.setEnabled(false);
+                			jComboNPuesto.setVisible(false);
+                			jComboNPuesto.setEnabled(false);
+                			jComboCoincidencias.removeAllItems();
+                			jComboCoincidencias.setVisible(false);
+                			jComboCoincidencias.setEnabled(false);
+                			jComboCompra.setVisible(false);
+                			jComboTiendas.setVisible(false);
+                			jComboProductos.setVisible(false);
+                			jLabelTotal.setVisible(false);
+                			jTextUnidades.setVisible(false);
+                			jRadioButtonOnline.setVisible(false);
+                			jRadioButtonPresencial.setVisible(false);
+                			jLabelPrecio.setVisible(false);
+                			jComboMetodoPago.setVisible(false);
+                			jLabelNCompra.setVisible(false);
+                			jLabelTienda.setVisible(false);
+                			jLabelProducto.setVisible(false);
+                			jLabelMPago.setVisible(false);
+                			jLabelUnidades.setVisible(false);
+                			jLabelTCompra.setVisible(false);
+            		fin sino
+            		jComboCoincidencias.agregarActionListener(Coincidencias[0]);
+		fin sino
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jComboCoincidenciasActionPerformed                                          
+        	si (jComboCoincidencias.obtenerSeleccionItem()!=nulo && jComboCoincidencias.isEnabled()){
+            		jPanelOcupado.setVisible(false);
+            		jComboDia.setEnabled(false);
+            		jComboHEntrada.setEnabled(false);
+            		jComboMEntrada.setEnabled(false);
+            		jComboHSalida.setEnabled(false);
+            		jComboMSalida.setEnabled(false);
+            		p = arrayPersonas[jComboCoincidencias.getSelectedIndex()];
+            		jLabelDia.setVisible(true);
+            		jComboDia.setVisible(true);
+            		jComboDia.setEnabled(true);
+            		jComboDia.setSelectedItem(p.getDEntrada());
+           	 	jLabelHEntrada1.setVisible(true);
+            		jLabelHEntrada2.setVisible(true);
+            		jComboHEntrada.setVisible(true);
+            		jComboHEntrada.setEnabled(true);
+            		ActionListener[] mEntrada = jComboMEntrada.getActionListeners();
+            		jComboMEntrada.removeActionListener(mEntrada[0]);
+            		jComboMEntrada.removeAllItems();
+
+			para(entero i=0; i<60;i++)
+                		si (i<10){
+                    			jComboMEntrada.agregarItem("0"+i);
+                		fin si
+				sino
+                    			jComboMEntrada.agregarItem(Cadena.valueOf(i));
+				fin sino
+			fin para
+			jComboMEntrada.addActionListener(mEntrada[0]);
+            		jComboMEntrada.setVisible(true);
+			si (p.obtenerMEntrada()<10)
+				jComboMEntrada.setSelectedItem("0"+p.getMEntrada());
+			fin si
+			sino
+				jComboMEntrada.setSelectedItem(String.valueOf(p.getMEntrada()));
+			fin sino
+			jLabel1.setVisible(true);
+            		jLabel3.setVisible(true);
+            		jLabelDocumento.setVisible(true);
+            		jComboMEntrada.setEnabled(true);
+            		jLabelNombre.setVisible(true);
+            		jLabelApellido.setVisible(true);
+            		jTextFieldNombre.setVisible(true);
+            		jTextFieldNombre.setEnabled(true);
+            		jTextFieldNombre.setText(p.getNombre());
+            		jTextFieldApellido.setVisible(true);
+            		jTextFieldApellido.setEnabled(true);
+            		jTextFieldApellido.setText(p.getApellido());
+            		jComboBoxTCI.setVisible(true);
+            		jComboBoxTCI.setEnabled(true);
+            		jComboBoxTCI.setSelectedItem(p.getTci());
+            		jTextFieldCI.setVisible(true);
+            		jTextFieldCI.setEnabled(true);
+            		jTextFieldCI.setText(p.getCi());
+            		jLabelHSalida1.setVisible(true);
+            		jLabelHSalida2.setVisible(true);
+            		jComboHSalida.setVisible(true);
+            		jComboHSalida.setEnabled(true);
+            		jComboMSalida.setVisible(true);
+            		jComboMSalida.setEnabled(true);
+            		jCheckBoxVehiculo.setVisible(true);
+            		jCheckBoxVehiculo.setEnabled(true);
+            		jButtonEliminar.setVisible(true);
+            		jButtonEliminar.setEnabled(true);
+            		jButtonConfirmarC.setVisible(true);
+            		jButtonConfirmarC.setEnabled(true);
+			si (p.obtenerCarro() es diferente de nulo)
+				jLabel6.setVisible(true);
+                		jCheckBoxVehiculo.setSelected(true);
+                		puesto = encontrarPuesto(p);
+                		jLabelTVehiculo1.setVisible(true);
+                		jLabelTVehiculo2.setVisible(true);
+                		jComboTVehiculo.setVisible(true);
+                		jComboTVehiculo.setEnabled(true);
+                		jComboTVehiculo.setSelectedItem(p.getCarro().getTipo());
+                		jLabelMarca.setVisible(true);
+                		jComboMarca.setVisible(true);
+                		jComboMarca.setEnabled(true);
+                		jComboMarca.setSelectedItem(p.getCarro().getMarca());
+                		jLabelColor.setVisible(true);
+                		jComboColor.setVisible(true);
+                		jComboColor.setEnabled(true);
+                		jComboColor.setSelectedItem(p.getCarro().getColor());
+                		jLabelPlaca.setVisible(true);
+                		jTextFieldPlaca.setVisible(true);
+                		jTextFieldPlaca.setEnabled(true);
+                		jTextFieldPlaca.setText(p.getCarro().getPlaca());
+                		jLabelPuesto.setVisible(true);
+                		jComboSector.setVisible(true);
+                		jComboSector.setEnabled(true);
+                		jComboNPuesto.setVisible(true);
+                		jComboNPuesto.setEnabled(true);
+				si (puesto!=nulo)
+                    			jComboSector.asignarSeleccionItem(puesto.obtenerSector());
+                		fin si
+                		jComboNPuesto.removeAllItems();
+                		si (jComboSector.obtenerSeleccionIndex()==0 || jComboSector.obtenerSeleccionIndex()==6)
+                    			para(entero i=0; i<100; i++)
+                        			jComboNPuesto.agregarItem(entero.toCadena(i+1));
+                    			fin para
+                		fin si
+				sino
+                    			para(entero i=0; i<500; i++)
+                        			jComboNPuesto.agregarItem(entero.toCadena(i+1));
+                    			fin para
+                		fin sino
+                		si (puesto!=null)
+                    			jComboNPuesto.obtenerSeleccionItem(entero.toCadena(puesto.obtenerNumero()));
+                		fin si
+				sino
+                			jCheckBoxVehiculo.setSelected(false);
+                			jLabel6.setVisible(false);
+                			jLabelTVehiculo1.setVisible(false);
+                			jLabelTVehiculo2.setVisible(false);
+                			jComboTVehiculo.setVisible(false);
+                			jComboTVehiculo.setEnabled(false);
+                			jLabelMarca.setVisible(false);
+                			jComboMarca.setVisible(false);
+                			jComboMarca.setEnabled(false);
+                			jLabelColor.setVisible(false);
+                			jComboColor.setVisible(false);
+                			jComboColor.setEnabled(false);
+                			jLabelPlaca.setVisible(false);
+                			jTextFieldPlaca.setVisible(false);
+                			jTextFieldPlaca.setEnabled(false);
+                			jLabelPuesto.setVisible(false);
+                			jComboSector.setVisible(false);
+                			jComboSector.setEnabled(false);
+                			jComboNPuesto.setVisible(false);
+                			jComboNPuesto.setEnabled(false);
+				fin sino
+				si (!p.obtenerCompras().esVacia())
+                			jComboMetodoPago.setEnabled(false);
+                			jComboCompra.setVisible(true);
+                			jComboCompra.setEnabled(true);
+                			jComboProductos.setVisible(true);
+                			jComboProductos.setEnabled(true);
+                			jComboTiendas.setVisible(true);
+                			jComboTiendas.setEnabled(true);
+                			ActionListener[] compra = jComboCompra.getActionListeners();
+                			jComboCompra.removeActionListener(compra[0]);
+                			jComboCompra.removeAllItems();
+                			jComboCompra.addActionListener(compra[0]);
+                			compras = p.obtenerCompras().obtenerArrayCompras();
+                			Para(entero i=0; i<compras.length; i++)
+                    				jComboCompra.addItem(1+i);
+               				fin para
+                			jLabelTotal.setVisible(true);
+                			jTextUnidades.setVisible(true);
+                			jRadioButtonOnline.setVisible(true);
+                			jRadioButtonOnline.setEnabled(true);
+                			jRadioButtonPresencial.setVisible(true);
+                			jRadioButtonPresencial.setEnabled(true);
+                			jTextUnidades.setEnabled(true);
+                			jTextUnidades.setVisible(true);
+                			jComboMetodoPago.setVisible(true);
+                			jComboMetodoPago.setEnabled(true);
+                			jLabelPrecio.setVisible(true);
+                			jLabelNCompra.setVisible(true);
+                			jLabelTienda.setVisible(true);
+               				jLabelProducto.setVisible(true);
+                			jLabelMPago.setVisible(true);
+                			jLabelUnidades.setVisible(true);
+                			jLabelTCompra.setVisible(true);
+				fin si
+	
+	jRadioButtonNombreApellidoActionPerformed                                                          
+        si (jRadioButtonNombreApellido.isSelected())
+            jLabelDia.setVisible(false);
+            jComboDia.setVisible(false);
+            jComboDia.setEnabled(false);
+            jLabelDocumento.setVisible(false);
+            jLabelHEntrada1.setVisible(false);
+            jLabelHEntrada2.setVisible(false);
+            jComboHEntrada.setVisible(false);
+            jComboHEntrada.setEnabled(false);
+            jComboMEntrada.setVisible(false);
+            jComboMEntrada.setEnabled(false);
+            jLabelNombre.setVisible(false);
+            jLabelApellido.setVisible(false);
+            jTextFieldNombre.setVisible(false);
+            jTextFieldNombre.setEnabled(false);
+            jTextFieldApellido.setVisible(false);
+            jTextFieldApellido.setEnabled(false);
+            jComboBoxTCI.setVisible(false);
+            jComboBoxTCI.setEnabled(false);
+            jTextFieldCI.setVisible(false);
+            jTextFieldCI.setEnabled(false);
+            jLabelHSalida1.setVisible(false);
+            jLabelHSalida2.setVisible(false);
+            jComboHSalida.setVisible(false);
+            jComboHSalida.setEnabled(false);
+            jComboMSalida.setVisible(false);
+            jComboMSalida.setEnabled(false);
+            jCheckBoxVehiculo.setVisible(false);
+            jComboBoxTCI.setEnabled(false);
+            jLabelTVehiculo1.setVisible(false);
+            jLabelTVehiculo2.setVisible(false);
+            jComboTVehiculo.setVisible(false);
+            jComboTVehiculo.setEnabled(false);
+            jLabelMarca.setVisible(false);
+            jComboMarca.setVisible(false);
+            jComboMarca.setEnabled(false);
+            jLabelColor.setVisible(false);
+            jComboColor.setVisible(false);
+            jComboColor.setEnabled(false);
+            jLabelPlaca.setVisible(false);
+            jTextFieldPlaca.setVisible(false);
+            jTextFieldPlaca.setEnabled(false);
+            jLabelPuesto.setVisible(false);
+            jComboSector.setVisible(false);
+            jComboSector.setEnabled(false);
+            jComboNPuesto.setVisible(false);
+            jComboNPuesto.setEnabled(false);
+            jPanelCoincidencia.setVisible(false);
+            jComboCoincidencias.removeAllItems();
+            jComboCoincidencias.setVisible(false);
+            jComboCoincidencias.setEnabled(false);
+            jTextBuscar1.setText("");
+            jLabelBNombre.setVisible(true);
+            jLabelBNombre.setVisible(true);
+            jLabelBApellido.setVisible(true);
+            jTextBuscar2.setVisible(true);
+            jTextBuscar2.setEnabled(true);
+            jTextBuscar2.setText("");
+            jComboTCI.setVisible(false);
+            jComboTCI.setEnabled(false);
+            jButtonBuscar.setBounds(800, jButtonBuscar.getY(), jButtonBuscar.getWidth(), jButtonBuscar.getHeight());
+            jComboCompra.setVisible(false);
+            jComboTiendas.setVisible(false);
+            jComboProductos.setVisible(false);
+            jLabelTotal.setVisible(false);
+            jTextUnidades.setVisible(false);
+            jRadioButtonOnline.setVisible(false);
+            jRadioButtonPresencial.setVisible(false);
+            jLabelPrecio.setVisible(false);
+            jComboMetodoPago.setVisible(false);
+            jLabelNCompra.setVisible(false);
+            jLabelTienda.setVisible(false);
+            jLabelProducto.setVisible(false);
+            jLabelMPago.setVisible(false);
+            jLabelUnidades.setVisible(false);
+            jLabelTCompra.setVisible(false);
+            jLabel1.setVisible(false);
+            jLabel3.setVisible(false);
+            jLabel6.setVisible(false);
+            jPanelOcupado.setVisible(false);
+            jButtonEliminar.setVisible(false);
+            jButtonEliminar.setEnabled(false);
+            jButtonConfirmarC.setVisible(false);
+            jButtonConfirmarC.setEnabled(false);
+	fin si
+
+jRadioButtonDocumentoActionPerformed                                                      
+        si(jRadioButtonDocumento.isSelected())
+            jLabelDia.setVisible(false);
+            jComboDia.setVisible(false);
+            jComboDia.setEnabled(false);
+            jLabelDocumento.setVisible(false);
+            jLabelHEntrada1.setVisible(false);
+            jLabelHEntrada2.setVisible(false);
+            jComboHEntrada.setVisible(false);
+            jComboHEntrada.setEnabled(false);
+            jComboMEntrada.setVisible(false);
+            jComboMEntrada.setEnabled(false);
+            jLabelNombre.setVisible(false);
+            jLabelApellido.setVisible(false);
+            jTextFieldNombre.setVisible(false);
+            jTextFieldNombre.setEnabled(false);
+            jTextFieldApellido.setVisible(false);
+            jTextFieldApellido.setEnabled(false);
+            jComboBoxTCI.setVisible(false);
+            jComboBoxTCI.setEnabled(false);
+            jTextFieldCI.setVisible(false);
+            jTextFieldCI.setEnabled(false);
+            jLabelHSalida1.setVisible(false);
+            jLabelHSalida2.setVisible(false);
+            jComboHSalida.setVisible(false);
+            jComboHSalida.setEnabled(false);
+            jComboMSalida.setVisible(false);
+            jComboMSalida.setEnabled(false);
+            jCheckBoxVehiculo.setVisible(false);
+            jComboBoxTCI.setEnabled(false);
+            jLabelTVehiculo1.setVisible(false);
+            jLabelTVehiculo2.setVisible(false);
+            jComboTVehiculo.setVisible(false);
+            jComboTVehiculo.setEnabled(false);
+            jLabelMarca.setVisible(false);
+            jComboMarca.setVisible(false);
+            jComboMarca.setEnabled(false);
+            jLabelColor.setVisible(false);
+            jComboColor.setVisible(false);
+            jComboColor.setEnabled(false);
+            jLabelPlaca.setVisible(false);
+            jTextFieldPlaca.setVisible(false);
+            jTextFieldPlaca.setEnabled(false);
+            jLabelPuesto.setVisible(false);
+            jComboSector.setVisible(false);
+            jComboSector.setEnabled(false);
+            jComboNPuesto.setVisible(false);
+            jComboNPuesto.setEnabled(false);
+            jPanelCoincidencia.setVisible(false);
+            jComboCoincidencias.removeAllItems();
+            jComboCoincidencias.setVisible(false);
+            jComboCoincidencias.setEnabled(false);
+            jLabelBNombre.setVisible(false);
+            jTextBuscar2.setVisible(false);
+            jTextBuscar2.setEnabled(false);
+            jTextBuscar2.setText("");
+            jTextBuscar1.setText("");
+            jLabelBApellido.setVisible(false);
+            jComboTCI.setEnabled(true);
+            jComboTCI.setVisible(true);
+            jButtonBuscar.setBounds(560, jButtonBuscar.getY(), jButtonBuscar.getWidth(), jButtonBuscar.getHeight());
+            jComboCompra.setVisible(false);
+            jComboTiendas.setVisible(false);
+            jComboProductos.setVisible(false);
+            jLabelTotal.setVisible(false);
+            jTextUnidades.setVisible(false);
+            jRadioButtonOnline.setVisible(false);
+            jRadioButtonPresencial.setVisible(false);
+            jLabelPrecio.setVisible(false);
+            jComboMetodoPago.setVisible(false);
+            jLabelNCompra.setVisible(false);
+            jLabelTienda.setVisible(false);
+            jLabelProducto.setVisible(false);
+            jLabelMPago.setVisible(false);
+            jLabelUnidades.setVisible(false);
+            jLabelTCompra.setVisible(false);
+            jLabel1.setVisible(false);
+            jLabel3.setVisible(false);
+            jLabel6.setVisible(false);
+            jPanelOcupado.setVisible(false);
+            jButtonEliminar.setVisible(false);
+            jButtonEliminar.setEnabled(false);
+            jButtonConfirmarC.setVisible(false);
+            jButtonConfirmarC.setEnabled(false);
+	fin si
+
+	jCheckBoxVehiculoActionPerformed(java.awt.event.ActionEvent evt) {                                                  
+        if(jCheckBoxVehiculo.isSelected()){
+            jLabel6.setVisible(true);
+            jLabelTVehiculo1.setVisible(true);
+            jLabelTVehiculo2.setVisible(true);
+            jComboTVehiculo.setVisible(true);
+            jComboTVehiculo.setEnabled(true);
+            jLabelMarca.setVisible(true);
+            jComboMarca.setVisible(true);
+            jComboMarca.setEnabled(true);
+            jLabelColor.setVisible(true);
+            jComboColor.setVisible(true);
+            jComboColor.setEnabled(true);
+            jLabelPlaca.setVisible(true);
+            jTextFieldPlaca.setVisible(true);
+            jTextFieldPlaca.setEnabled(true);
+            jLabelPuesto.setVisible(true);
+            jComboSector.setVisible(true);
+            jComboSector.setEnabled(true);
+            jComboNPuesto.setVisible(true);
+            jComboNPuesto.setEnabled(true);
+            if(puesto!=null){
+                jComboSector.setSelectedItem(puesto.getSector());
+                jComboNPuesto.removeAllItems();
+                si(jComboSector.obtenerSeleccionIndex()==0 || jComboSector.obtenerSeleccionIndex()==6)
+                    para(entero i=0; i<100; i++)
+                        jComboNPuesto.agregarItem(entero.toCadena(i+1));
+                    fin para
+              	fin si
+		sino
+                    para(int i=0; i<500; i++)
+                        jComboNPuesto.agregarItem(Entero.toCadena(i+1));
+                    fin para
+                jComboNPuesto.obtenerSeleccionItem(Entero.toCadena(puesto.getNumero()));
+		fin sino
+         fin si
+        sino
+            jLabel6.setVisible(false);
+            jLabelTVehiculo1.setVisible(false);
+            jLabelTVehiculo2.setVisible(false);
+            jComboTVehiculo.setVisible(false);
+            jLabelMarca.setVisible(false);
+            jComboMarca.setVisible(false);
+            jLabelColor.setVisible(false);
+            jComboColor.setVisible(false);
+            jLabelPlaca.setVisible(false);
+            jTextFieldPlaca.setVisible(false);
+            jLabelPuesto.setVisible(false);
+            jComboSector.setVisible(false);
+            jComboNPuesto.setVisible(false);
+            jPanelOcupado.setVisible(false);
+
+	jComboSectorActionPerformed(java.awt.event.ActionEvent evt) {
+            jComboNPuesto.removeAllItems();
+	    Si(jComboSector.getSelectedIndex()==0 || jComboSector.getSelectedIndex()==6){
+            	Para(int i=0; i<100; i++){
+                	jComboNPuesto.agregarItem(Integer.toString(i+1));
+            	}
+            }else{
+            	for(int i=0; i<500; i++){
+                	jComboNPuesto.agregarItem(Integer.toString(i+1));
+            	}
+             }
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase menuEditar
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase puestoEst
+	privado cadena sector;
+	privado entero numero;
+	privado Lista ocupantes;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	puestoEst(cadena sector, entero numero)
+		sector = sector;
+		numero = numero;
+		ocupantes = nueva Lista();
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	cadena obtenerSector()
+		retornar sector;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	entero obtenerNumero()
+		retornar numero;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Lista obtenerOcupantes()
+		retornar ocupantes;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	agregarOcupantes(Cadena listaOcupantes) //Para cargar los ocupantes del archivo a la lista del puesto.
+        	cadena[] arrayOcupantes = listaOcupantes.split("~");
+        	para(entero i=0; i<arrayOcupantes.length; i++){
+            		cadena[] oc = arrayOcupantes[i].split("/");
+            		Persona o = nueva Persona(entero.parseInt(oc[0]), oc[1], oc[2], oc[3], oc[4], oc[5], entero.parseInt(oc[6]), entero.parseInt(oc[7]), Integer.parseInt(oc[8]), Integer.parseInt(oc[9]));
+            		o.asignarCarro(nuevo Vehiculo(o, oc[10], oc[11], oc[12], oc[13]));
+            		ocupantes.agregarPersonaAlFinal(o);
+		fin para
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+Fin clase puestoEst
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase vCompras
+	tienda tiendaSeleccionada = nulo;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	vCompras()
+		para (entero i=0; i<Bienvenido.nombresTiendas.length; i++)
+            		jComboTiendas.addItem(Bienvenido.nombresTiendas[i]);
+		fin para 
+		jPanelNoTienda.setVisible(false);
+        	jLabelCVacio.setVisible(false);
+        	jPanelTienda.setVisible(false);
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	conseguirValorTienda(entero numLocal) //Para mostrar los datos de la tienda seleccionada en el panel
+		jPanelTienda.setVisible(true);
+        	Tienda t = Bienvenido.tiendas.buscarTienda(numLocal);
+        	jLabelNombreTienda.setText("Nombre: " + t.getNombre());
+        	jLabelEncargado.setText("Encargado: " + t.getEncargado());
+        	jLabelUbicacion.setText("Ubicación: Entrada " + t.getUbicacion());
+        	jLabelLocal.setText("Local: L" + t.getLocal());
+        	tiendaSeleccionada = t;
+        	jLabelFoto.setIcon(determinarLogo(numLocal));
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	mostrarNombreTienda(entero numLocal)
+        	jLabelCVacio.setVisible(true);
+        	Tienda t = Bienvenido.tiendas.buscarTienda(numLocal);
+        	jLabelCVacio.setText(t.getNombre());
+        	jLabelCVacio.asignarBounds(jlabel.obtenerX()-jLabelCVacio.obtenerWidth()/2+jlabel.obtenerWidth()/2, jlabel.obtenerY()-jLabelCVacio.obtenerHeight()+jlabel.obtenerHeight()/2, jLabelCVacio.obtenerWidth(), jLabelCVacio.obtenerHeight());
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	Icon determinarLogo(int numLocal){ //Para determinar el logo que se mostrara en el panel
+		switch(numLocal){
+            case 1:
+                return new ImageIcon(getClass().getResource("/Imagenes/Multimax.png"));
+            case 2:
+                return new ImageIcon(getClass().getResource("/Imagenes/GamePlanet.png"));
+            case 3:
+                return new ImageIcon(getClass().getResource("/Imagenes/Her&Him.png"));
+            case 4:
+                return new ImageIcon(getClass().getResource("/Imagenes/Koko_Superstore.png"));
+            case 5:
+                return new ImageIcon(getClass().getResource("/Imagenes/Blasco_Joyeria.png"));
+            case 6:
+                return new ImageIcon(getClass().getResource("/Imagenes/Unilook.png"));
+            case 7:
+                return new ImageIcon(getClass().getResource("/Imagenes/Blackphone.png"));
+            case 8:
+                return new ImageIcon(getClass().getResource("/Imagenes/Mundo_Virtual.png"));
+            case 9:
+                return new ImageIcon(getClass().getResource("/Imagenes/Ecomascotas.png"));
+            case 10:
+                return new ImageIcon(getClass().getResource("/Imagenes/Rori.png"));
+            case 11:
+                return new ImageIcon(getClass().getResource("/Imagenes/Aero_store.png"));
+            case 12:
+                return new ImageIcon(getClass().getResource("/Imagenes/Girl_MissLulu.png"));
+            case 13:
+                return new ImageIcon(getClass().getResource("/Imagenes/Baby_Love.png"));
+            case 14:
+                return new ImageIcon(getClass().getResource("/Imagenes/City_movil.png"));
+            case 15:
+                return new ImageIcon(getClass().getResource("/Imagenes/Carolina_Herrera.png"));
+            case 16:
+                return new ImageIcon(getClass().getResource("/Imagenes/Sunglass.png"));
+            case 17:
+                return new ImageIcon(getClass().getResource("/Imagenes/Fitlab.png"));
+            case 18:
+                return new ImageIcon(getClass().getResource("/Imagenes/Oro_margarita.png"));
+            case 19:
+                return new ImageIcon(getClass().getResource("/Imagenes/Wrangler.png"));
+            case 20:
+                return new ImageIcon(getClass().getResource("/Imagenes/BANDOLERA.png"));
+            case 21:
+                return new ImageIcon(getClass().getResource("/Imagenes/Champions.png"));
+            case 22:
+                return new ImageIcon(getClass().getResource("/Imagenes/Mele_Divani.png"));
+            case 23:
+                return new ImageIcon(getClass().getResource("/Imagenes/GSL.png"));
+            case 24:
+                return new ImageIcon(getClass().getResource("/Imagenes/Tarbay.png"));
+            case 25:
+                return new ImageIcon(getClass().getResource("/Imagenes/Marisol_import.png"));
+            case 26:
+                return new ImageIcon(getClass().getResource("/Imagenes/lucy_lingeries.png"));
+            case 27:
+                return new ImageIcon(getClass().getResource("/Imagenes/Ferremetro.png"));
+            case 28:
+                return new ImageIcon(getClass().getResource("/Imagenes/Sigo.png"));
+            case 29:
+                return new ImageIcon(getClass().getResource("/Imagenes/Karamba_ninos.png"));
+            case 30:
+                return new ImageIcon(getClass().getResource("/Imagenes/Nivel_surf.png"));
+            case 31:
+                return new ImageIcon(getClass().getResource("/Imagenes/Nice_Toys.png"));
+            case 32:
+                return new ImageIcon(getClass().getResource("/Imagenes/Monikerias.png"));
+            case 33:
+                return new ImageIcon(getClass().getResource("/Imagenes/cerere.png"));
+            case 34:
+                return new ImageIcon(getClass().getResource("/Imagenes/Miss_lulu.png"));
+            case 35:
+                return new ImageIcon(getClass().getResource("/Imagenes/Tech_Star.png"));
+            case 36:
+                return new ImageIcon(getClass().getResource("/Imagenes/Go_sport.png"));
+            case 37:
+                return new ImageIcon(getClass().getResource("/Imagenes/Sweet_Ice.png"));
+            case 38:
+                return new ImageIcon(getClass().getResource("/Imagenes/Perfumes_factory.png"));
+            case 39:
+                return new ImageIcon(getClass().getResource("/Imagenes/Alta_vision.png"));
+            case 40:
+                return new ImageIcon(getClass().getResource("/Imagenes/Mario_Hernandez.png"));
+            case 41:
+                return new ImageIcon(getClass().getResource("/Imagenes/DIGITEC.png"));
+            case 42:
+                return new ImageIcon(getClass().getResource("/Imagenes/Isha_Accessories.png"));
+            case 43:
+                return new ImageIcon(getClass().getResource("/Imagenes/McPostres.png"));
+            case 44:
+                return new ImageIcon(getClass().getResource("/Imagenes/Samsung.png"));
+            case 45:
+                return new ImageIcon(getClass().getResource("/Imagenes/Poker_plus.png"));
+            case 46:
+                return new ImageIcon(getClass().getResource("/Imagenes/Mundo_escolar.png"));
+            case 47:
+                return new ImageIcon(getClass().getResource("/Imagenes/Shoe_Box.png"));
+            case 48:
+                return new ImageIcon(getClass().getResource("/Imagenes/FLB.png"));
+            case 49:
+                return new ImageIcon(getClass().getResource("/Imagenes/AQUA.png"));
+            case 50:
+                return new ImageIcon(getClass().getResource("/Imagenes/Grupo_Selecto's.png"));
+            case 51:
+                return new ImageIcon(getClass().getResource("/Imagenes/Galaxy.png"));
+            case 52:
+                return new ImageIcon(getClass().getResource("/Imagenes/Stylo_Import.png"));
+            case 53:
+                return new ImageIcon(getClass().getResource("/Imagenes/Fashion_world.png"));
+            case 54:
+                return new ImageIcon(getClass().getResource("/Imagenes/Techzone.png"));
+            case 55:
+                return new ImageIcon(getClass().getResource("/Imagenes/Sporty_World.png"));
+            case 56:
+                return new ImageIcon(getClass().getResource("/Imagenes/Rodito.png"));
+            case 57:
+                return new ImageIcon(getClass().getResource("/Imagenes/McDonald's.png"));
+            case 58:
+                return new ImageIcon(getClass().getResource("/Imagenes/Arturos.png"));
+            case 59:
+                return new ImageIcon(getClass().getResource("/Imagenes/Accessories_Galore.png"));
+            case 60:
+                return new ImageIcon(getClass().getResource("/Imagenes/Glamour_Beauty.png"));
+            default: return null;
+        fin switch	
+*
+*
+METODOS PARA DARLE EVENTOS AL CLICK 
+*
+*
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+fin clase vCompras
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Inicio
+Clase vEstacionamiento
+	Persona personaActual = DatosUsuario.usuariosEnSesion.verTope();
+    boolean esMoto = DatosUsuario.usuariosEnSesion.verTope().obtenerCarro().obtenerTipo().equals("Moto");
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	vEstacionamiento
+		jLabelCBambu1.asignarVisible(false);
+        	jLabelCBambu2.asignarVisible(false);
+        	jLabelCGuayacan.asignarVisible(false);
+        	jLabelCMangle.asignarVisible(false);
+        	jLabelCPalma.asignarVisible(false);
+        	jLabelCRoble.asignarVisible(false);
+        	jLabelCSaman.asignarVisible(false);
+        	jPanelPValido.asignarVisible(false);
+        	jLabelPValido1.asignarVisible(false);
+        	jLabelPValido2.asignarVisible(false);
+        	jPanelOcupado.asignarVisible(false);
+        	jLabelOcupado1.asignarVisible(false);
+        	jLabelOcupado2.asignarVisible(false);
+		Si (esMoto)
+			jLabelMangle.asignarVisible(false);
+            		jLabelSaman.asignarVisible(false);
+            		jLabelRoble.asignarVisible(false);
+            		jLabelGuayacan.asignarVisible(false);
+            		jLabelBambu1.asignarVisible(false);
+			Para (entero i=0; i<100; i++)
+                		jComboNPuesto.agregarItem(entero.toCadena(i+1));
+			fin para
+				jComboSPuesto.agregarItem("Sector Palma");
+            			jComboSPuesto.agregarItem("Sector Bambú 2");
+            			jLabelPValido2.asignarText("(Entre 1 y 100)");
+		fin si
+		sino
+			jLabelPalma.asignarVisible(false);
+            		jLabelBambu2.asignarVisible(false);
+			para (entero i=0; i<500; i++)
+				jComboNPuesto.agregarItem(Entero.toCadena(i+1));
+			fin para
+			jComboSPuesto.agregarItem("Sector Mangle");
+            		jComboSPuesto.agregarItem("Sector Samán");
+            		jComboSPuesto.agregarItem("Sector Roble");
+            		jComboSPuesto.agregarItem("Sector Guayacán");
+            		jComboSPuesto.agregarItem("Sector Bambú 1");
+            		jLabelPValido2.asignarText("(Entre 1 y 500)");
+		fin sino
+			jComboNPuesto.asignarSeleccionIndex(0);
+        		jComboSPuesto.asignarSeleccionIndex(0);
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	*
+	*
+	METODOS PARA HACER VISIBLE EL NOMBRE DE LAS ENTRADAS SI SE PONE EL MOUSE SOBRE EL CUADRO U OCULTAR EL MISMO AL QUITAR EL MOUSE
+	*	
+	*
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	jButtonConfirmarActionPerformed                                                 
+        	puestoEst puestoNuevo=nulo
+        
+        	si (jComboNPuesto.obtenerSeleccionItem().equals("") || !jComboNPuesto.obtenerSeleccionItem().toCadena().matches("^[0-9]+$") || entero.parseInt(jComboNPuesto.obtenerSeleccionItem().toCadena())<1 || entero.parseInt(jComboNPuesto.obtenerSeleccionItem().toCadena())>Entero.parseInt(jLabelPValido2.obtenerText().subcadena(11, jLabelPValido2.obtenerText().length()-1))){                       
+            		jPanelPValido.asignarVisible(true);
+            		jLabelPValido1.asignarVisible(true);
+		fin si
+		sino
+			jPanelPValido.asignarVisible(false);
+            		jLabelPValido1.asignarVisible(false);
+            		jLabelPValido2.asignarVisible(false);
+			si (esMoto)
+				puestoNuevo = Bienvenido.sectoresMotos[jComboSPuesto.obtenerSeleccionIndex()][jComboNPuesto.obtenerSeleccionIndex()];
+            		fin si
+			sino
+                		puestoNuevo = Bienvenido.sectoresCarros[jComboSPuesto.obtenerSeleccionIndex()][jComboNPuesto.obtenerSeleccionIndex()];	
+			fin sino
+			Si (!puestoNuevo.obtenerOcupantes().estaOcupado(personaActual))
+                		puestoNuevo.obtenerOcupantes().agregarPersonaAlFinal(personaActual);
+                		si (esMoto)
+                    			Bienvenido.sectoresMotos[jComboSPuesto.obtenerSeleccionIndex()][jComboNPuesto.obtenerSeleccionIndex()]=puestoNuevo;
+                		fin si
+				sino
+                    			Bienvenido.sectoresCarros[jComboSPuesto.obtenerSeleccionIndex()][jComboNPuesto.obtenerSeleccionIndex()]=puestoNuevo;
+                		fin sino
+                			entero c=Mostrar en pantalla("¿Desea realizar una compra?", "Seleccione una opción:", mostrar SI_NO);
+                			dispose();
+                			si (c==0)
+                    				vCompras VC = nueva vCompras();
+                			fin si
+					sino
+                    			si (DatosUsuario.usuariosEnSesion.obtenerTamaño()<DatosUsuario.numUsuariosEnSesion)
+                        			DatosUsuario.puedeCarro=false;
+                        			DatosUsuario DU = nuevo DatosUsuario();
+                    			fin si
+					sino
+                        			DatosUsuario.puedeCarro=true;
+                       			mientras (!DatosUsuario.usuariosEnSesion.esVacia())
+                            			Bienvenido.personas.insertarPersona(DatosUsuario.usuariosEnSesion.sacarPersonaDePila());
+                    			fin mientras
+                        		intentar
+                            			Bienvenido B = nuevo Bienvenido();
+                            			B.asignarVisible(true);
+                        			Capturar (IOException ex) 
+                            				Logger.getLogger(DatosUsuario.clase.obtenerName()).log(Level.SEVERE, nulo, ex);
+                        			fin capturar
+                    			fin intentar
+                			fin sino
+			fin si
+            		sino
+                		jPanelOcupado.asignarVisible(true);
+                		jLabelOcupado1.asignaVisible(true);
+                		jLabelOcupado2.asignaVisible(true);
+                		nuevo Thread()
+                    			run()
+                        			intentar
+                            				Thread.sleep(2500);
+                            				jPanelOcupado.asignaVisible(false);
+                            				jLabelOcupado1.asignaVisible(false);
+                            				jLabelOcupado2.asignaVisible(false);
+                        				capturar(Exception q)
+							fin capturar
+						fin intentar
+                		.start();
+			fin sino
+	run()
+		nuevo vEstacionamiento().asignarVisible(true);
